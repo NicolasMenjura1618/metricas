@@ -40,7 +40,7 @@ const handleDelete = async (e, id) => {
   };
 
   const handleUpdate = (e, id) => {
-    e.stopPropagation();
+
     navigate(`/canchas/${id}/actualizar`);
   };
 

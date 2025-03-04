@@ -20,16 +20,26 @@ const UpdateCancha = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = async () => {
       try {
+        const axiosRes = await BuscaCanchas.get(`/${id}`);
+console.log("Axios response:", axiosRes); // Objeto completo de Axios
+
+// Si tu backend retorna: { status: 'success', data: { cancha: {...} } }
+console.log("Server data:", axiosRes.data);          // { status: 'success', data: {...} }
+console.log("Cancha:", axiosRes.data.data.cancha);
         const response = await BuscaCanchas.get(`/${id}`);
-        console.log(response.data);
-        const cancha = response.data.cancha; // Access the Cancha object
+        console.log("Response completa:", response);
+        console.log("Response data:", response.data);
+        console.log("Response data cancha:", response.data.data.Cancha);
+        console.log("Response data nombre:", response.data.data.Cancha.nombre);
 
-        console.log("Fetched cancha data:", cancha);
+        console.log(response.data); // Verifica la estructura
+  
+        const CanchaX = response.data.data.Cancha; // Extrae la cancha correctamente
+        setNombre(CanchaX?.nombre || "");
+        setLocacion(CanchaX?.locacion || ""); 
+        setDireccion(CanchaX?.direccion || ""); 
+        setDescripcion(CanchaX?.descripcion || "");
 
-        setNombre(cancha?.nombre || "");
-        setLocacion(cancha?.locacion || "");
-        setDireccion(cancha?.direccion || "");
-        setDescripcion(cancha?.descripcion || "");
       } catch (error) {
         console.error("Error al obtener los datos de la cancha", error);
       }

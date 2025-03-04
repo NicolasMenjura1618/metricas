@@ -33,29 +33,7 @@ app.get("/api/v1/Canchas/:id", async (req, res) => {
         const canchas = await db.query("SELECT * FROM canchas WHERE id = $1", [id]);
 
         const reviews = await db.query("SELECT * FROM reviews WHERE id = $1", [id]);
-        if (canchas.rows.length === 0) { // Corrected variable
-            return res.status(404).json({ status: "error", message: "Cancha no encontrada" });
-        }
-
-        res.status(200).json({
-            status: "success",
-            data: {
-                Cancha: canchas.rows[0],
-                Reviews: reviews.rows,
-            },
-        });
-    } catch (err) {
-        console.error("Error en la base de datos:", err);
-        res.status(500).json({ status: "error", message: "Error interno del servidor" });
-    }
-});
-
-// reviews por ID
-app.post("/api/v1/Canchas/:id/AddReview", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const reviews = await db.query("SELECT * FROM reviews WHERE id = $1", [id]);
-        if (canchas.rows.length === 0) { // Corrected variable
+        if (canchas.rows.length === 0) {
             return res.status(404).json({ status: "error", message: "Cancha no encontrada" });
         }
 
@@ -87,7 +65,6 @@ app.post("/api/v1/Canchas", async (req, res) => {
             [nombre, descripcion, locacion, direccion]
         );
 
-        // Notify that a cancha has been added
         console.log("Notification: A new cancha has been added:", resultado.rows[0]);
         
         res.status(201).json({
@@ -98,6 +75,35 @@ app.post("/api/v1/Canchas", async (req, res) => {
         });
     } catch (err) {
         console.error("Error en la base de datos:", err);
+        res.status(500).json({ status: "error", message: "Error interno del servidor" });
+    }
+});
+
+// crear review
+app.post("/api/v1/Canchas/:id/AddReview", async (req, res) => {
+    const { cancha_id, name, review, rating } = req.body;
+
+    // Validación de campos requeridos
+    if (!cancha_id || !name || !review || !rating) {
+        return res.status(400).json({ status: "error", message: "Todos los campos son requeridos" });
+    }
+
+    try {
+        const resultado = await db.query(
+            "INSERT INTO reviews (cancha_id, name, review, rating) VALUES ($1, $2, $3, $4) RETURNING *",
+            [cancha_id, name, review, rating]
+        );
+
+        console.log("Notification: A new review has been added:", resultado.rows[0]);
+        
+        res.status(201).json({
+            status: "success",
+            data: {
+                Review: resultado.rows[0],
+            },
+        });
+    } catch (err) {
+        console.error("Error en la base de datos:", err); // Detailed error logging
         res.status(500).json({ status: "error", message: "Error interno del servidor" });
     }
 });
@@ -139,7 +145,6 @@ app.delete("/api/v1/Canchas/:id", async (req, res) => {
         const { id } = req.params;
         const resultado = await db.query("DELETE FROM canchas WHERE id = $1", [id]);
 
-        // Notify that a cancha has been deleted
         console.log("Notification: A cancha has been deleted with ID:", id);
         
         res.status(204).send();

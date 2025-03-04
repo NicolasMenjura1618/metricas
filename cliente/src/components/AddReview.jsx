@@ -11,19 +11,29 @@ const AddReview = () => {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState("Rating");
 
-  const handleSubmitReview = async (e) => {
+const handleSubmitReview = async (e) => {
     e.preventDefault();
-    try {
-      await BuscaCanchas.post(`/${id}/addReview`, {
-        name,
-        review: reviewText,
-        rating,
-      });
-      navigate("/"); // Use navigate instead of history.push
-      navigate(location.pathname);
-    } catch (err) {
-      console.error(err); // Log the error for debugging
+    
+    if (!name || !reviewText || rating === "Rating") {
+        alert("llena todos los campos");
+        return;
     }
+
+    try {
+        await BuscaCanchas.post(`/${id}/AddReview`, {
+            cancha_id: id,
+
+            name,
+            review: reviewText,
+            rating,
+        });
+        navigate("/");
+        navigate(location.pathname);
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        alert("Failed to submit review. Please try again."); // User feedback
+    }
+
   };
 
   return (
