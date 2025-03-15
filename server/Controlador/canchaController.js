@@ -80,8 +80,11 @@ exports.getCanchaById = async (req, res) => {
   }
 };
 
-// Crear una cancha (solo admin)
 exports.createCancha = async (req, res) => {
+    console.log("Request body:", req.body); // Log the request body
+
+    // Crear una cancha (solo admin)
+
   const { nombre, descripcion, locacion, direccion } = req.body;
 
   if (!nombre || !descripcion || !locacion || !direccion) {
@@ -112,44 +115,41 @@ exports.createCancha = async (req, res) => {
   }
 };
 
-// Actualizar una cancha (solo admin)
+// Implementing the updateCancha function
 exports.updateCancha = async (req, res) => {
-  const { id } = req.params;
-  const { nombre, descripcion, locacion, direccion } = req.body;
+    const { id } = req.params;
+    const { nombre, descripcion, locacion, direccion } = req.body;
 
-  if (!nombre || !descripcion || !locacion || !direccion) {
-    return res
-      .status(400)
-      .json({ status: "error", message: "Todos los campos son requeridos" });
-  }
-
-  try {
-    const resultado = await db.query(
-      `UPDATE canchas 
-       SET nombre = $1, descripcion = $2, locacion = $3, direccion = $4 
-       WHERE id = $5 
-       RETURNING *`,
-      [nombre, descripcion, locacion, direccion, id]
-    );
-
-    if (resultado.rows.length === 0) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "Cancha no encontrada" });
+    if (!nombre || !descripcion || !locacion || !direccion) {
+        return res
+            .status(400)
+            .json({ status: "error", message: "Todos los campos son requeridos" });
     }
 
-    res.status(200).json({
-      status: "success",
-      data: {
-        Cancha: resultado.rows[0],
-      },
-    });
-  } catch (err) {
-    console.error("Error al actualizar cancha:", err);
-    res
-      .status(500)
-      .json({ status: "error", message: "Error interno del servidor" });
-  }
+    try {
+        const resultado = await db.query(
+            "UPDATE canchas SET nombre = $1, descripcion = $2, locacion = $3, direccion = $4 WHERE id = $5 RETURNING *",
+            [nombre, descripcion, locacion, direccion, id]
+        );
+
+        if (resultado.rows.length === 0) {
+            return res
+                .status(404)
+                .json({ status: "error", message: "Cancha no encontrada" });
+        }
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                Cancha: resultado.rows[0],
+            },
+        });
+    } catch (err) {
+        console.error("Error al actualizar cancha:", err);
+        res
+            .status(500)
+            .json({ status: "error", message: "Error interno del servidor" });
+    }
 };
 
 // Eliminar una cancha (solo admin)

@@ -49,7 +49,21 @@ const UpdateCancha = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token"); // Retrieve the token
+      console.log("Token value:", token); // Log the token value for debugging
+
       await BuscaCanchas.put(`/${id}`, {
+        nombre,
+        locacion,
+        direccion,
+        descripcion,
+      }, {
+          headers: {
+              Authorization: `Bearer ${token}`, // Include the token in the request
+          },
+
+
+
         nombre,
         locacion,
         direccion,
