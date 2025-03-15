@@ -1,6 +1,6 @@
 const db = require("../db");
 
-// Obtener todas las reseñas de una cancha por ID
+// Obtener todas las reseñas de una cancha por ID (accesible para todos)
 exports.getReviewsByCanchaId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -18,18 +18,17 @@ exports.getReviewsByCanchaId = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al obtener reviews:", err);
+    console.error("Error al obtener reseñas:", err);
     return res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
-// Crear review
+// Crear review (accesible para usuarios autenticados)
 exports.createReview = async (req, res) => {
   const { cancha_id, name, review, rating } = req.body;
 
-  // Validación de campos requeridos
   if (!cancha_id || !name || !review || !rating) {
     return res
       .status(400)
@@ -42,7 +41,7 @@ exports.createReview = async (req, res) => {
       [cancha_id, name, review, rating]
     );
 
-    console.log("Notification: A new review has been added:", resultado.rows[0]);
+    console.log("Nueva reseña creada:", resultado.rows[0]);
 
     return res.status(201).json({
       status: "success",
@@ -51,14 +50,14 @@ exports.createReview = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al crear review:", err);
+    console.error("Error al crear reseña:", err);
     return res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
-// Eliminar una reseña
+// Eliminar una reseña (accesible para usuarios que sean admin o el creador de la reseña, según lógica adicional)
 exports.deleteReview = async (req, res) => {
   const { id } = req.params;
 
@@ -66,7 +65,7 @@ exports.deleteReview = async (req, res) => {
     await db.query("DELETE FROM reviews WHERE id = $1", [id]);
     return res.status(204).send();
   } catch (err) {
-    console.error("Error en la base de datos al eliminar reseña:", err);
+    console.error("Error al eliminar reseña:", err);
     return res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });

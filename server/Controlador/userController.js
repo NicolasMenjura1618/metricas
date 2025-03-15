@@ -2,10 +2,10 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// Registrar usuario (rol por defecto: "user")
 exports.registerUser = async (req, res) => {
   const { user_name, user_email, user_password } = req.body;
 
-  // Validar campos requeridos
   if (!user_name || !user_email || !user_password) {
     return res
       .status(400)
@@ -24,23 +24,23 @@ exports.registerUser = async (req, res) => {
         .json({ status: "error", message: "El usuario ya existe" });
     }
 
-    // Hashear contraseña
+    // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(user_password, 10);
 
-    // Insertar usuario en la base de datos
+    // Insertar usuario con rol "user"
     const result = await db.query(
-      "INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *",
-      [user_name, user_email, hashedPassword]
+      "INSERT INTO users (user_name, user_email, user_password, role) VALUES ($1, $2, $3, $4) RETURNING *",
+      [user_name, user_email, hashedPassword, "user"]
     );
 
-    // Generar token
+    // Generar token JWT
     const token = jwt.sign(
-      { id: result.rows[0].user_id, email: user_email },
+      { id: result.rows[0].user_id, email: user_email, role: result.rows[0].role },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
 
-    console.log("Nuevo Usuario Ingresado:", result.rows[0]);
+    console.log("Nuevo Usuario Registrado:", result.rows[0]);
 
     return res.status(201).json({
       status: "success",
@@ -50,17 +50,17 @@ exports.registerUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al crear usuario:", err);
+    console.error("Error al registrar usuario:", err);
     return res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
+// Login de usuario
 exports.loginUser = async (req, res) => {
   const { user_email, user_password } = req.body;
 
-  // Validar campos requeridos
   if (!user_email || !user_password) {
     return res
       .status(400)
@@ -68,7 +68,6 @@ exports.loginUser = async (req, res) => {
   }
 
   try {
-    // Verificar si el usuario existe
     const user = await db.query(
       "SELECT * FROM users WHERE user_email = $1",
       [user_email]
@@ -80,7 +79,6 @@ exports.loginUser = async (req, res) => {
         .json({ status: "error", message: "Credenciales inválidas" });
     }
 
-    // Verificar contraseña
     const isValidPassword = await bcrypt.compare(
       user_password,
       user.rows[0].user_password
@@ -91,9 +89,9 @@ exports.loginUser = async (req, res) => {
         .json({ status: "error", message: "Credenciales inválidas" });
     }
 
-    // Generar token
+    // Generar token incluyendo el rol del usuario
     const token = jwt.sign(
-      { id: user.rows[0].user_id, email: user_email },
+      { id: user.rows[0].user_id, email: user_email, role: user.rows[0].role },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
@@ -106,7 +104,7 @@ exports.loginUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al iniciar sesión:", err);
+    console.error("Error al iniciar sesión:", err);
     return res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });

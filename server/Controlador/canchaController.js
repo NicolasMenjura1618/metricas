@@ -1,6 +1,6 @@
 const db = require("../db");
 
-// Obtener todas las canchas
+// Obtener todas las canchas (accesible para todos)
 exports.getAllCanchas = async (req, res) => {
   try {
     const canchasRating = await db.query(`
@@ -25,14 +25,14 @@ exports.getAllCanchas = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al obtener canchas:", err);
+    console.error("Error al obtener canchas:", err);
     res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
-// Obtener una cancha por ID
+// Obtener una cancha por ID (accesible para todos)
 exports.getCanchaById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -73,18 +73,17 @@ exports.getCanchaById = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al obtener cancha:", err);
+    console.error("Error al obtener cancha:", err);
     res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
-// Crear una cancha
+// Crear una cancha (solo admin)
 exports.createCancha = async (req, res) => {
   const { nombre, descripcion, locacion, direccion } = req.body;
 
-  // Validación de campos requeridos
   if (!nombre || !descripcion || !locacion || !direccion) {
     return res
       .status(400)
@@ -97,7 +96,7 @@ exports.createCancha = async (req, res) => {
       [nombre, descripcion, locacion, direccion]
     );
 
-    console.log("Notification: A new cancha has been added:", resultado.rows[0]);
+    console.log("Nueva cancha creada:", resultado.rows[0]);
 
     res.status(201).json({
       status: "success",
@@ -106,14 +105,14 @@ exports.createCancha = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al crear cancha:", err);
+    console.error("Error al crear cancha:", err);
     res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
-// Actualizar una cancha
+// Actualizar una cancha (solo admin)
 exports.updateCancha = async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion, locacion, direccion } = req.body;
@@ -146,14 +145,14 @@ exports.updateCancha = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error en la base de datos al actualizar cancha:", err);
+    console.error("Error al actualizar cancha:", err);
     res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
 };
 
-// Eliminar una cancha
+// Eliminar una cancha (solo admin)
 exports.deleteCancha = async (req, res) => {
   const { id } = req.params;
 
@@ -166,7 +165,7 @@ exports.deleteCancha = async (req, res) => {
 
     return res.status(204).send();
   } catch (err) {
-    console.error("Error en la base de datos al eliminar cancha:", err);
+    console.error("Error al eliminar cancha:", err);
     res
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });

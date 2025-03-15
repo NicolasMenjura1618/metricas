@@ -1,21 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const canchaController = require("../Controlador/canchaController");
+const canchaController = require("../controllers/canchaController");
+const authMiddleware = require("../middlewares/auth");
+const adminMiddleware = require("../middlewares/admin");
 
-
-// GET /api/v1/canchas/        => Obtener todas las canchas
+// Rutas accesibles para todos
 router.get("/", canchaController.getAllCanchas);
-
-// GET /api/v1/canchas/:id     => Obtener cancha por ID
 router.get("/:id", canchaController.getCanchaById);
 
-// POST /api/v1/canchas/       => Crear cancha
-router.post("/", canchaController.createCancha);
-
-// PUT /api/v1/canchas/:id     => Actualizar cancha
-router.put("/:id", canchaController.updateCancha);
-
-// DELETE /api/v1/canchas/:id  => Eliminar cancha
-router.delete("/:id", canchaController.deleteCancha);
+// Rutas protegidas: solo admin
+router.post("/", authMiddleware, adminMiddleware, canchaController.createCancha);
+router.put("/:id", authMiddleware, adminMiddleware, canchaController.updateCancha);
+router.delete("/:id", authMiddleware, adminMiddleware, canchaController.deleteCancha);
 
 module.exports = router;

@@ -2,16 +2,14 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-// Importar rutas
 const userRoutes = require("./rutas/userRoutes");
 
-const canchaRoutes = require("./rutas/canchaRoutes");
-
-const reviewRoutes = require("./rutas/reviewRoutes");
+const canchaRoutes = require("./routes/canchaRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 
-// Middlewares
+// Middlewares globales
 app.use(cors());
 app.use(express.json());
 
