@@ -4,7 +4,7 @@ import BuscaCanchas from "../apis/BuscaCanchas";
 
 function AddCancha() {
   const [nombre, setNombre] = useState("");
-  const [ubicacion, setUbicacion] = useState("");
+  const [locacion, setLocacion] = useState("");
   const [direccion, setDireccion] = useState("");
   const [descripcion, setDescripcion] = useState("");
 
@@ -15,21 +15,25 @@ function AddCancha() {
     try {
       const response = await BuscaCanchas.post("/", {
         nombre,
-        ubicacion,
-        direccion,
         descripcion,
+        locacion,
+        direccion
       });
       console.log("API Response:", response);
 
-      // Refresh the list of canchas after adding a new one
       const newResponse = await BuscaCanchas.get("/");
       setCanchas(newResponse.data.data.Canchas); // Update the context with the new list
 
       // Notify user of successful addition
-      notify("Cancha añadida");
+      notify("Cancha creada"); // Updated message
+
+      // Clear input fields
+      setNombre("");
+      setLocacion("");
+      setDireccion("");
+      setDescripcion("");
     } catch (error) {
       alert("Error al añadir cancha."); // User-friendly error message
-
     }
   };
 
@@ -52,11 +56,10 @@ function AddCancha() {
                 type="text"
                 className="form-control"
                 placeholder="Ubicación de la cancha" 
-                value = {ubicacion}
-                required
+                value={locacion}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setUbicacion(value);
+                  setLocacion(value);
                 }}
               />
             </div>

@@ -1,88 +1,98 @@
 import React, { useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom"; // Import useNavigate
-import BuscaCanchas from "../apis/BuscaCanchas"; // Import BuscaCanchas
+import BuscaCanchas from "../apis/BuscaCanchas";
+import { useParams } from "react-router-dom";
+import { useContext } from "react";
+import { CanchasContext } from "../context/contextCanchas";
 
 const AddReview = () => {
   const { id } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const { canchaSelect, setSelectCancha } = useContext(CanchasContext);
 
-  const [name, setName] = useState("");
-  const [reviewText, setReviewText] = useState("");
-  const [rating, setRating] = useState("Rating");
+  const [name, setNombre] = useState("");
+  const [rating, setRating] = useState(1);
+  const [review, setReview] = useState("");
 
-const handleSubmitReview = async (e) => {
+  const handleSubmit = async (e) => {
+    console.log("Submitting review for cancha ID:", id);
     e.preventDefault();
-    
-    if (!name || !reviewText || rating === "Rating") {
-        alert("llena todos los campos");
-        return;
-    }
-
     try {
-        await BuscaCanchas.post(`/${id}/AddReview`, {
-            cancha_id: id,
+      const response = await BuscaCanchas.post(`/${id}/AddReview`, {
+        cancha_id: id,
+        name,
+        rating,
+        review,
+      });
 
-            name,
-            review: reviewText,
-            rating,
-        });
-        navigate("/");
-        navigate(location.pathname);
-    } catch (err) {
-        console.error(err); // Log the error for debugging
-        alert("Failed to submit review. Please try again."); // User feedback
+      // Construye el objeto de reseña usando el name ingresado
+      const newReview = {
+        id: response.data.data.id,
+        name, // Usa el valor del estado, es decir, el nombre ingresado
+        rating,
+        review,
+      };
+
+      // Se actualiza el estado utilizando el objeto newReview
+      setSelectCancha({
+        ...canchaSelect,
+        Reviews: [...(canchaSelect.Reviews || []), newReview],
+      });
+
+      // Limpia el formulario tras enviar la reseña
+      setNombre("");
+      setRating(1);
+      setReview("");
+    } catch (error) {
+      console.error(
+        "Error al enviar la reseña:",
+        error.response ? error.response.data : error.message
+      );
     }
-
   };
 
   return (
-    <div className="mb-2">
-      <form action="">
-        <div className="form-row">
-          <div className="form-group col-8">
-            <label htmlFor="name">Nombre</label>
-            <input
-              value={name} // Use name instead of nombre
-              onChange={(e) => setName(e.target.value)}
-              id="nombre"
-              placeholder="nombre"
-              type="text"
-              className="form-control"
-            />
-          </div>
-          <div className="form-group col-4">
-            <label htmlFor="rating">Rating</label>
-            <select
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              id="rating"
-              className="custom-select"
-            >
-              <option disabled>Rating</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="Review">Review</label>
-          <textarea
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-            id="Review"
+    <div className="card p-4 shadow-sm">
+      <h4 className="text-center text-primary">Agregar Reseña</h4>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Nombre</label>
+          <input
+            type="text"
             className="form-control"
+            value={name}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Calificación</label>
+          <select
+            className="form-select"
+            value={rating}
+            onChange={(e) => setRating(parseInt(e.target.value))}
+            required
+          >
+            <option value="1">⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Comentario</label>
+          <textarea
+            className="form-control"
+            rows="3"
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+            required
           ></textarea>
         </div>
-        <button
-          type="submit"
-          onClick={handleSubmitReview}
-          className="btn btn-primary"
-        >
-          Añadir
+
+        <button type="submit" className="btn btn-primary w-100">
+          Enviar Reseña
         </button>
       </form>
     </div>

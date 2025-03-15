@@ -21,14 +21,10 @@ const UpdateCancha = () => {
     const fetchData = async () => {
       try {
         const axiosRes = await BuscaCanchas.get(`/${id}`);
-console.log("Axios response:", axiosRes); // Objeto completo de Axios
+        
+        console.log("Axios response:", axiosRes); 
 
-// Si tu backend retorna: { status: 'success', data: { cancha: {...} } }
-console.log("Server data:", axiosRes.data);          // { status: 'success', data: {...} }
-console.log("Cancha:", axiosRes.data.data.cancha);
         const response = await BuscaCanchas.get(`/${id}`);
-        console.log("Response completa:", response);
-        console.log("Response data:", response.data);
         console.log("Response data cancha:", response.data.data.Cancha);
         console.log("Response data nombre:", response.data.data.Cancha.nombre);
 
@@ -46,7 +42,8 @@ console.log("Cancha:", axiosRes.data.data.cancha);
     };
 
     fetchData();
-  }, [id, nombre, locacion, direccion, descripcion]);
+  }, [id]);
+
 
   // Función para actualizar la cancha
   const handleSubmit = async (e) => {

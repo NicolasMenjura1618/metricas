@@ -1,16 +1,18 @@
-import React from 'react'
-import Header from '../components/Header'
-import AddCancha from '../components/AddCancha'
-import ListaCancha from '../components/ListaCancha'
+import React from 'react';
+import Header from '../components/Header';
+import AddCancha from '../components/AddCancha';
+import ListaCancha from '../components/ListaCancha';
 
 const Home = () => {
   return (
-    <div>
-      <Header/>
-      <AddCancha/>
-      <ListaCancha/>
-    </div>
-  )
-}
+    <>
+      <Header />
+      <main className="container mt-4">
+        <AddCancha />
+        <ListaCancha />
+      </main>
+    </>
+  );
+};
 
-export default Home
+export default Home;

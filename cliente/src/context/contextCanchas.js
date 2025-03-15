@@ -1,7 +1,10 @@
 import { useState, createContext, useEffect } from "react"; // Import useEffect for notifications
 
 export const CanchasContext = createContext({
-  notify: () => {}, // Default notify function
+notify: (message) => {
+    alert(message); // Simple alert for notification
+}, // Default notify function
+
 });
 
 export const CanchasContextProvider = ({ children }) => {
@@ -9,9 +12,8 @@ export const CanchasContextProvider = ({ children }) => {
   const [canchaSelect, setSelectCancha] = useState(null); // State for current can
 
   const notify = (message) => {
-    // Logic to display notification (e.g., alert, toast, etc.)
-    // Implement a more user-friendly notification system here
-    console.log(message); // Placeholder for a more sophisticated notification system
+    alert(message); // Simple alert for notification
+
 
   };
 
