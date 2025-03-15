@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const reviewController = require("../controllers/reviewController");
+const reviewController = require("../Controlador/reviewController");
 const authMiddleware = require("../middlewares/auth");
 
 // Obtener reseñas de una cancha (accesible para todos)
