@@ -1,21 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
-
-const userRoutes = require("./rutas/userRoutes");
-const canchaRoutes = require("./rutas/canchaRoutes");
-const reviewRoutes = require("./rutas/reviewRoutes");
-
-
+// server/app.js
+const express = require('express');
+const dotenv = require('dotenv');
 const app = express();
 
+// Carga variables de entorno
+dotenv.config();
+
 // Middlewares globales
-app.use(cors());
 app.use(express.json());
 
-// Rutas
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/canchas", canchaRoutes);
-app.use("/api/v1/reviews", reviewRoutes);
+// Importa y usa rutas (ajusta la ruta según tus carpetas)
+const rutasAPI = require('./rutas');  // Asegúrate de que el archivo index.js en 'rutas/' exporte las rutas correctamente
+app.use('/api', rutasAPI);
+
+// Si deseas servir el front-end (estático) desde el servidor:
+app.use(express.static('./cliente/public'));
+
 
 module.exports = app;

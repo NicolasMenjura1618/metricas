@@ -2,6 +2,8 @@ const db = require("../db");
 
 // Obtener todas las canchas (accesible para todos)
 exports.getAllCanchas = async (req, res) => {
+  console.log("Fetching all courts..."); // Log the request for debugging
+
   try {
     const canchasRating = await db.query(`
       SELECT * 
@@ -170,4 +172,11 @@ exports.deleteCancha = async (req, res) => {
       .status(500)
       .json({ status: "error", message: "Error interno del servidor" });
   }
+};
+module.exports = {
+  getAllCanchas: exports.getAllCanchas,
+  getCanchaById: exports.getCanchaById,
+  createCancha: exports.createCancha,
+  updateCancha: exports.updateCancha,
+  deleteCancha: exports.deleteCancha
 };
