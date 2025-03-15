@@ -4,8 +4,8 @@ require("dotenv").config();
 
 const userRoutes = require("./rutas/userRoutes");
 
-const canchaRoutes = require("./routes/canchaRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
+const canchaRoutes = require("./rutas/canchaRoutes");
+const reviewRoutes = require("./rutas/reviewRoutes");
 
 const app = express();
 
