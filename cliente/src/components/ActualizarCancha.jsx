@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { toast } from 'react-toastify'; // Moved import for consistency
 import BuscaCanchas from "../apis/BuscaCanchas";
 
 const UpdateCancha = () => {
@@ -17,18 +17,10 @@ const UpdateCancha = () => {
 
   // Obtención de datos en el useEffect
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = async () => {
       try {
-        const axiosRes = await BuscaCanchas.get(`/${id}`);
-        
-        console.log("Axios response:", axiosRes); 
-
         const response = await BuscaCanchas.get(`/${id}`);
         console.log("Response data cancha:", response.data.data.Cancha);
-        console.log("Response data nombre:", response.data.data.Cancha.nombre);
-
-        console.log(response.data); // Verifica la estructura
   
         const CanchaX = response.data.data.Cancha; // Extrae la cancha correctamente
         setNombre(CanchaX?.nombre || "");
@@ -38,12 +30,12 @@ const UpdateCancha = () => {
 
       } catch (error) {
         console.error("Error al obtener los datos de la cancha", error);
+        toast.error("Error al obtener los datos de la cancha."); // User-friendly error message
       }
     };
 
     fetchData();
   }, [id]);
-
 
   // Función para actualizar la cancha
   const handleSubmit = async (e) => {
@@ -61,23 +53,18 @@ const UpdateCancha = () => {
           headers: {
               Authorization: `Bearer ${token}`, // Include the token in the request
           },
-
-
-
-        nombre,
-        locacion,
-        direccion,
-        descripcion,
       });
+      toast.success("Cancha actualizada exitosamente."); // Notify user of successful update
       navigate("/");
     } catch (error) {
       console.error("Error al actualizar la cancha", error);
+      toast.error("Error al actualizar la cancha."); // User-friendly error message using toast
     }
   };
 
   return (
     <div>
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="nombre">Nombre</label>
           <input
@@ -118,7 +105,7 @@ const UpdateCancha = () => {
             className="form-control"
           />
         </div>
-        <button type="submit" onClick={handleSubmit} className="btn btn-primary">
+        <button type="submit" className="btn btn-primary">
           Actualizar Cancha
         </button>
       </form>

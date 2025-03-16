@@ -1,11 +1,43 @@
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+} from '@mui/material';
 
-function Header() {
+import { ExitToApp as LogoutIcon } from '@mui/icons-material';
+
+const Header = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
-    <div>
-        <h1 className ="font-weigth-light display-1 text-center">RANK DE CANCHAS DE BALONCESTO</h1>
-    </div>
-  )
-}
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Canchas App
+          </Typography>
+          <IconButton
+            color="inherit"
+            onClick={handleLogout}
+            title="Cerrar sesión"
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
+};
 
-export default Header
+export default Header;

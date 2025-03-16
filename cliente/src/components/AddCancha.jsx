@@ -1,4 +1,6 @@
 import React, { useState, useContext } from "react";
+import { toast } from 'react-toastify'; // Moved import for consistency
+
 import { CanchasContext } from "../context/contextCanchas"; // Import the context
 import BuscaCanchas from "../apis/BuscaCanchas";
 
@@ -34,12 +36,14 @@ function AddCancha() {
       setDireccion("");
       setDescripcion("");
     } catch (error) {
-      alert("Error al añadir cancha."); // User-friendly error message
+      toast.error("Error al añadir cancha."); // User-friendly error message using toast
+
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <div className="d-flex justify-content-center align-items-center vh-100" onSubmit={handleSubmit}>
+
       <div className="p-4 border rounded shadow bg-light">
         <form onSubmit={handleSubmit}>
           <div className="form-row">
@@ -85,7 +89,8 @@ function AddCancha() {
               />
             </div>
             <div className="col text-center">
-              <button className="btn btn-primary w-100">Añadir</button>
+              <button className="btn btn-primary w-100" type="submit">Añadir</button>
+
             </div>
           </div>
         </form>

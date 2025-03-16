@@ -1,107 +1,127 @@
-import React, { useContext, useEffect } from "react";
-import StarRating from "./starRating"; // Import StarRating component
+import React, { useContext } from 'react';
 
-import { useNavigate } from "react-router-dom";
-import BuscaCanchas from "../apis/BuscaCanchas";
-import { CanchasContext } from "../context/contextCanchas";
+import { useNavigate } from 'react-router-dom';
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Typography,
+  Grid,
+  Rating,
+  Box,
+} from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { toast } from 'react-toastify';
+import { canchasAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { CanchasContext } from '../context/contextCanchas'; // Import CanchasContext
 
-const ListaCancha = () => {
-  const { canchas, setCanchas, notify } = useContext(CanchasContext);
+
+const ListaCancha = ({ canchas, isOwner = false, emptyMessage = "No hay canchas disponibles" }) => {
   const navigate = useNavigate();
+  const { setCanchas } = useContext(CanchasContext); // Get setCanchas from context
 
-  useEffect(() => {
-    const fetchCanchas = async () => {
+  const { user } = useAuth();
+
+  const handleEdit = (id) => {
+    navigate(`/actualizar/${id}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta cancha?')) {
       try {
-        const { data } = await BuscaCanchas.get("/");
-        console.log("API Response:", data);
-        setCanchas(data.data.Canchas);
+        await canchasAPI.delete(id);
+        toast.success('Cancha eliminada exitosamente');
+        // Update the state to remove the deleted cancha
+        setCanchas(prevCanchas => prevCanchas.filter(cancha => cancha.id !== id)); // Update context state
+
+        setCanchas(prevCanchas => prevCanchas.filter(cancha => cancha.id !== id));
+
       } catch (error) {
-        console.error("Error al obtener canchas:", error);
+        toast.error('Error al eliminar la cancha');
       }
-    };
-
-    fetchCanchas();
-  }, [setCanchas]);
-
-  const handleDelete = async (e, id) => {
-    e.stopPropagation();
-    try {
-      const response = await BuscaCanchas.delete(`/${id}`);
-      setCanchas(canchas.filter((cancha) => cancha.id !== id));
-      notify("Cancha Eliminada!");
-      console.log("Cancha deleted.", response);
-      alert("Cancha Eliminada");
-    } catch (error) {
-      console.error("Error al eliminar la cancha:", error);
-      alert("Error al eliminar la cancha. Inténtalo de nuevo.");
     }
   };
 
-  const handleUpdate = (e, id) => {
-    e.stopPropagation();
-    navigate(`/canchas/${id}/actualizar`);
-  };
-
-  const handleSelect = (id, e) => {
+  const handleVerDetalles = (id) => {
     navigate(`/canchas/${id}`);
   };
 
-  return (
-    <div className="container mt-4">
-      <h2 className="text-center text-primary mb-4">Lista de Canchas</h2>
-      {canchas && canchas.length > 0 ? (
-        <div className="row">
-          {canchas.map((cancha) => (
-            <div
-              key={cancha.id}
-              className="col-md-4 mb-4"
-              onClick={(e) => handleSelect(cancha.id, e)}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="card h-100 shadow-sm">
-                <div className="card-body">
-                  <h5 className="card-title text-primary">{cancha.nombre}</h5>
-                  <h6 className="card-subtitle mb-2 text-muted">
-                    {cancha.locacion}
-                  </h6>
-                  <p className="card-text">
-                    <strong>Dirección:</strong> {cancha.direccion}
-                  </p>
-                  <p className="card-text">
-                    <strong>Descripción:</strong> {cancha.descripcion}
-                  </p>
-                  <p className="card-text">
-<strong>Ranking:</strong> <StarRating rating={cancha.average_rating || 0} />
+  if (!canchas || !canchas.length) {
+    return (
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
+        <Typography variant="h6" color="textSecondary">
+          {emptyMessage}
+        </Typography>
+        {isOwner && (
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={() => navigate('/agregar')}
+          >
+            Agregar Cancha
+          </Button>
+        )}
+      </Box>
+    );
+  }
 
-                  </p>
-                  <p className="card-text">
-                    <strong>Votos:</strong> {cancha.count || 0} 
-                  </p>
-                </div>
-                <div className="card-footer bg-transparent border-top-0 d-flex justify-content-between">
-                  <button
-                    className="btn btn-warning btn-sm"
-                    onClick={(e) => handleUpdate(e, cancha.id)}
+  return (
+    <Grid container spacing={3}>
+      {canchas.map((cancha) => (
+        <Grid item xs={12} sm={6} md={4} key={cancha.id}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="div" gutterBottom>
+                {cancha.nombre}
+              </Typography>
+              <Typography color="textSecondary" gutterBottom>
+                {cancha.ubicacion}
+              </Typography>
+              <Box display="flex" alignItems="center" mb={1}>
+                <Rating value={cancha.rating || 0} readOnly precision={0.5} />
+                <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+                  ({cancha.num_reviews || 0} reseñas)
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="textSecondary">
+                Precio: ${cancha.precio}/hora
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => handleVerDetalles(cancha.id)}
+              >
+                Ver Detalles
+              </Button>
+              {(isOwner || cancha.user_id === user?.id) && (
+                <>
+                  <Button
+                    size="small"
+                    startIcon={<EditIcon />}
+                    onClick={() => handleEdit(cancha.id)}
                   >
-                    Actualizar
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={(e) => handleDelete(e, cancha.id)}
+                    Editar
+                  </Button>
+                  <Button
+                    size="small"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleDelete(cancha.id)}
                   >
-                    Borrar
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="alert alert-info text-center">
-          No hay canchas disponibles
-        </div>
-      )}
-    </div>
+                    Eliminar
+                  </Button>
+                </>
+              )}
+            </CardActions>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 
