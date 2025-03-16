@@ -1,73 +1,96 @@
-const db = require("../db");
+// server/controladores/reviewController.js
+const pool = require('../db');
 
-// Obtener todas las reseñas de una cancha por ID (accesible para todos)
-exports.getReviewsByCanchaId = async (req, res) => {
+// Obtener todas las reviews
+const getAllReviews = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const resultado = await db.query(
-      "SELECT * FROM reviews WHERE cancha_id = $1",
-      [id]
-    );
-
-    return res.status(200).json({
-      status: "success",
-      resultado: resultado.rows.length,
-      data: {
-        reviews: resultado.rows,
-      },
-    });
-  } catch (err) {
-    console.error("Error al obtener reseñas:", err);
-    return res
-      .status(500)
-      .json({ status: "error", message: "Error interno del servidor" });
+    const result = await pool.query('SELECT * FROM reviews ORDER BY id ASC');
+    return res.status(200).json({ data: result.rows });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
-// Crear review (accesible para usuarios autenticados)
-exports.createReview = async (req, res) => {
-  const { cancha_id, name, review, rating } = req.body;
-
-  if (!cancha_id || !name || !review || !rating) {
-    return res
-      .status(400)
-      .json({ status: "error", message: "Todos los campos son requeridos" });
-  }
-
+// Crear una nueva review
+const createReview = async (req, res) => {
   try {
-    const resultado = await db.query(
-      "INSERT INTO reviews (cancha_id, name, review, rating) VALUES ($1, $2, $3, $4) RETURNING *",
+    const { cancha_id, name, review, rating } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO reviews (cancha_id, name, review, rating)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
       [cancha_id, name, review, rating]
     );
 
-    console.log("Nueva reseña creada:", resultado.rows[0]);
-
-    return res.status(201).json({
-      status: "success",
-      data: {
-        Review: resultado.rows[0],
-      },
-    });
-  } catch (err) {
-    console.error("Error al crear reseña:", err);
-    return res
-      .status(500)
-      .json({ status: "error", message: "Error interno del servidor" });
+    return res.status(201).json({ data: result.rows[0] });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
-// Eliminar una reseña (accesible para usuarios que sean admin o el creador de la reseña, según lógica adicional)
-exports.deleteReview = async (req, res) => {
-  const { id } = req.params;
-
+// Obtener review por ID
+const getReviewById = async (req, res) => {
   try {
-    await db.query("DELETE FROM reviews WHERE id = $1", [id]);
-    return res.status(204).send();
-  } catch (err) {
-    console.error("Error al eliminar reseña:", err);
-    return res
-      .status(500)
-      .json({ status: "error", message: "Error interno del servidor" });
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM reviews WHERE id = $1', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Review no encontrada' });
+    }
+
+    return res.status(200).json({ data: result.rows[0] });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
+};
+
+// Actualizar review
+const updateReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, review, rating } = req.body;
+
+    const result = await pool.query(
+      `UPDATE reviews
+       SET name = $1,
+           review = $2,
+           rating = $3
+       WHERE id = $4
+       RETURNING *`,
+      [name, review, rating, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Review no encontrada' });
+    }
+
+    return res.status(200).json({ data: result.rows[0] });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Eliminar review
+const deleteReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('DELETE FROM reviews WHERE id = $1 RETURNING *', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Review no encontrada' });
+    }
+
+    return res.status(200).json({ data: result.rows[0] });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  getAllReviews,
+  createReview,
+  getReviewById,
+  updateReview,
+  deleteReview,
 };

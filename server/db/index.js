@@ -1,13 +1,13 @@
-const { Pool } = require("pg");
+// server/db.js
+const { Pool } = require('pg');
 
+// Ajusta estos datos a tu configuración local
 const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'rank',
+  password: '1618',
+  port: 5432,
 });
 
-module.exports = {
-  query: (text, params) => pool.query(text, params),
-};
+module.exports = pool;

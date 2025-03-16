@@ -1,15 +1,19 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const reviewController = require("../Controlador/reviewController");
-const authMiddleware = require("../middlewares/auth");
+const {
+  getAllReviews,
+  createReview,
+  getReviewById,
+  updateReview,
+  deleteReview
+} = require('../Controlador/reviewController');
 
-// Obtener reseñas de una cancha (accesible para todos)
-router.get("/:id", reviewController.getReviewsByCanchaId);
 
-// Crear reseña (usuarios autenticados)
-router.post("/:id/AddReview", authMiddleware, reviewController.createReview);
-
-// Eliminar reseña (aquí se podría agregar lógica adicional para verificar si el usuario es creador o admin)
-router.delete("/:id", authMiddleware, reviewController.deleteReview);
+// CRUD Reviews
+router.get('/', getAllReviews);        // GET /api/reviews
+router.post('/', createReview);        // POST /api/reviews
+router.get('/:id', getReviewById);     // GET /api/reviews/:id
+router.put('/:id', updateReview);      // PUT /api/reviews/:id
+router.delete('/:id', deleteReview);   // DELETE /api/reviews/:id
 
 module.exports = router;

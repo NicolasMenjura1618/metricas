@@ -1,19 +1,19 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const userController = require("../Controlador/userController");
-const authMiddleware = require("../middlewares/auth");
+const {
+  getAllUsers,
+  createUser,
+  getUserById,
+  updateUser,
+  deleteUser
+} = require('../Controlador/userController');
 
-// Rutas públicas
-router.post("/", userController.registerUser);
-router.post("/login", userController.loginUser);
 
-// Ruta protegida: ejemplo de perfil
-router.get("/perfil", authMiddleware, (req, res) => {
-  res.status(200).json({
-    status: "success",
-    message: "Acceso autorizado",
-    user: req.user,
-  });
-});
+// CRUD Usuarios
+router.get('/', getAllUsers);                   // GET /api/users
+router.post('/', createUser);                   // POST /api/users
+router.get('/:user_id', getUserById);           // GET /api/users/:user_id
+router.put('/:user_id', updateUser);            // PUT /api/users/:user_id
+router.delete('/:user_id', deleteUser);         // DELETE /api/users/:user_id
 
 module.exports = router;
