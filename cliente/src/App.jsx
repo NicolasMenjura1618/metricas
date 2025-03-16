@@ -1,39 +1,28 @@
-import React from "react";
-import ErrorBoundary from "./components/ErrorBoundary"; // Import ErrorBoundary
+// client/src/App.jsx
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DetallesCancha from "./routes/DetallesCancha";
-import Actualizar from "./routes/Actualizar";
-import Home from "./routes/Home";
-import { CanchasContextProvider } from "./context/contextCanchas";
-import Register from "./components/Register"; // Import Register component
-import Login from "./components/Login"; // Import Login component
-
-
-const App = () => {
+function App() {
   return (
-    <CanchasContextProvider>
-
-    <Router>
-      <div className="container">
-        <ErrorBoundary>
-            <Routes>
-
-          <Route path="/" element={<Home />} />
-          <Route path="/canchas/:id/actualizar" element={<Actualizar/>} />
-          <Route path="/canchas/:id" element={<DetallesCancha/>} />
-            <Route path="/register" element={<Register />} /> {/* Route for registration */}
-            <Route path="/login" element={<Login />} /> {/* Route for login */}
-            </Routes>
-
-        </ErrorBoundary>
-
-      </div>
-    </Router>
-
-    </CanchasContextProvider>
-   
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } 
+        />
+        {/* Redirige a /login para cualquier ruta desconocida */}
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;

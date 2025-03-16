@@ -1,56 +1,60 @@
+// client/src/components/Login.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
-
     try {
-      const response = await axios.post('http://localhost:3000/api/users/login', {
-        user_email: userEmail,
-        user_password: userPassword,
+      const response = await fetch('http://localhost:3000/api/login', { // Ajusta la URL según tu configuración
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       });
-      localStorage.setItem('token', response.data.data.token); // Store the token
-      setSuccess('Login successful! Redirecting...');
-      // Redirect or update UI as needed
+      const data = await response.json();
+      if (response.ok) {
+        // Guarda el token en localStorage y redirige al dashboard.
+        localStorage.setItem('token', data.token);
+        navigate('/dashboard');
+      } else {
+        setError(data.message || 'Error de autenticación');
+      }
     } catch (err) {
-      setError(err.response.data.message || 'Login failed.');
+      setError('Error de conexión al servidor');
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <h2>Iniciar Sesión</h2>
+      <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label>
+          <label>Usuario:</label>
           <input
-            type="email"
-            value={userEmail}
-            onChange={(e) => setUserEmail(e.target.value)}
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label>Contraseña:</label>
           <input
             type="password"
-            value={userPassword}
-            onChange={(e) => setUserPassword(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <button type="submit">Login</button>
+        {error && <div style={{ color: 'red' }}>{error}</div>}
+        <button type="submit">Entrar</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
 };

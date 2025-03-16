@@ -1,0 +1,29 @@
+/* Basic styles for the application */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
