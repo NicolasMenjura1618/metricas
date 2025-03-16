@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { CanchasContext } from "../context/contextCanchas";
 
-const AddReview = () => {
+const AddReview = ({ cancha, onAddReview }) => {
   const { id } = useParams();
-  const { canchaSelect, setSelectCancha } = useContext(CanchasContext);
+  const { setSelectCancha } = useContext(CanchasContext);
 
   const [name, setNombre] = useState("");
   const [rating, setRating] = useState(1);
@@ -31,11 +31,10 @@ const AddReview = () => {
         review,
       };
 
-      // Se actualiza el estado utilizando el objeto newReview
-      setSelectCancha({
-        ...canchaSelect,
-        Reviews: [...(canchaSelect.Reviews || []), newReview],
-      });
+      // Notify parent component of the new review
+      if (onAddReview) {
+        onAddReview(newReview);
+      }
 
       // Limpia el formulario tras enviar la reseña
       setNombre("");

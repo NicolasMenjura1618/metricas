@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify'; // Moved import for consistency
 import BuscaCanchas from "../apis/BuscaCanchas";
 
-const UpdateCancha = () => {
+const ActualizarCancha = () => {
   const { id } = useParams();
   console.log("Fetching data for cancha with ID:", id);
   
@@ -113,4 +113,4 @@ const UpdateCancha = () => {
   );
 };
 
-export default UpdateCancha;
+export default ActualizarCancha;

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import StarRating from "./starRating";
+import StarRating from "./StarRating";
 import BuscaCanchas from "../apis/BuscaCanchas";
 
 const Reviews = ({ reviews, onDelete }) => {

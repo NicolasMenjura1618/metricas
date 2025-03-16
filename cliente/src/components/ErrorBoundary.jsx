@@ -15,13 +15,23 @@ class ErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     // You can also log the error to an error reporting service
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-    toast.error("Something went wrong. Please try again later.");
+    toast.error("Ha ocurrido un error inesperado");
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false });
   }
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
+      // Custom fallback UI in Spanish
+      return (
+        <div>
+          <h2>Algo salió mal</h2>
+          <p>Ha ocurrido un error inesperado</p>
+          <button onClick={this.handleRetry}>Reintentar</button>
+        </div>
+      );
     }
 
     return this.props.children; 

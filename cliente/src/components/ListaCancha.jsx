@@ -34,8 +34,6 @@ const ListaCancha = ({ canchas, isOwner = false, emptyMessage = "No hay canchas 
         await canchasAPI.delete(id);
         toast.success('Cancha eliminada exitosamente');
         // Update the state to remove the deleted cancha
-        setCanchas(prevCanchas => prevCanchas.filter(cancha => cancha.id !== id)); // Update context state
-
         setCanchas(prevCanchas => prevCanchas.filter(cancha => cancha.id !== id));
 
       } catch (error) {
