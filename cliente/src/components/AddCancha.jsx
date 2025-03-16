@@ -13,7 +13,8 @@ function AddCancha() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await BuscaCanchas.post("/", {
+      const response = await BuscaCanchas.post("/v1/canchas", {
+
         nombre,
         descripcion,
         locacion,
