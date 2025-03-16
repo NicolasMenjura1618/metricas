@@ -3,6 +3,6 @@ const router = express.Router();
 const canchaRoutes = require('./canchaRoutes');
 
 // Use the cancha routes
-router.use('/cancha', canchaRoutes);
+router.use('/canchas', canchaRoutes);
 
 module.exports = router;
