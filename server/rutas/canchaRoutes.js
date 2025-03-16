@@ -5,9 +5,8 @@ const canchaController = require("../Controlador/canchaController");
 const authMiddleware = require("../middlewares/auth");
 const adminMiddleware = require("../middlewares/admin");
 
-
-console.log("canchaController:", canchaController);
-console.log("createCancha function:", canchaController.createCancha);
+console.log("canchaController:", canchaController); // Log the entire controller for debugging
+console.log("createCancha function:", canchaController.createCancha); // Log the createCancha function
 
 // Rutas accesibles para todos
 router.get("/", canchaController.getAllCanchas);
@@ -20,7 +19,6 @@ router.get("/test", (req, res) => {
 
 // Rutas protegidas: solo admin
 router.post("/", canchaController.createCancha); // Keep only one definition
-
 
 router.put("/:id", authMiddleware, adminMiddleware, canchaController.updateCancha);
 router.delete("/:id", authMiddleware, adminMiddleware, canchaController.deleteCancha);
