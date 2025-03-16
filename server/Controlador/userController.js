@@ -61,8 +61,8 @@ const createUser = async (req, res) => {
     }
 
     // Hash de la contraseña
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(user_password, salt);
+    const hashedPassword = await bcrypt.hash(user_password, 10);
+
 
     const result = await pool.query(
       'INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3) RETURNING user_id, user_name, user_email',
@@ -98,6 +98,12 @@ const loginUser = async (req, res) => {
 
     // Verificar contraseña
     const validPassword = await bcrypt.compare(password, user.user_password);
+    
+    // Asegurarse de que la contraseña se maneje de manera coherente
+    if (!user.user_password) {
+        return res.status(401).json({ message: 'Correo electrónico o contraseña incorrectos' });
+    }
+
     if (!validPassword) {
       return res.status(401).json({ message: 'Correo electrónico o contraseña incorrectos' });
     }
