@@ -12,7 +12,8 @@ const Login = () => {
     e.preventDefault();
     setError('');
     try {
-      const response = await fetch('http://localhost:3000/api/login', { // Ajusta la URL según tu configuración
+      const response = await fetch('http://localhost:3000/api/login', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -23,7 +24,8 @@ const Login = () => {
         localStorage.setItem('token', data.token);
         navigate('/dashboard');
       } else {
-        setError(data.message || 'Error de autenticación');
+        setError(data.message || 'Error de autenticación. Por favor, verifica tus credenciales.');
+
       }
     } catch (err) {
       setError('Error de conexión al servidor');
