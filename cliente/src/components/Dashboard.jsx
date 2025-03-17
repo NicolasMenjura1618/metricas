@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [misCanchas, setMisCanchas] = useState([]);
   const [misReviews, setMisReviews] = useState([]);
+  const [todasLasCanchas, setTodasLasCanchas] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth(); // Ensure user is used in the component
 
@@ -31,12 +32,16 @@ const Dashboard = () => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        const [canchasResponse, reviewsResponse] = await Promise.all([
+        const [canchasResponse, reviewsResponse, todasCanchasResponse] = await Promise.all([
           canchasAPI.getUserCanchas(),
-          reviewsAPI.getUserReviews()
+          reviewsAPI.getUserReviews(),
+          canchasAPI.getAll()
         ]);
-        setMisCanchas(canchasResponse.data);
-        setMisReviews(reviewsResponse.data);
+        
+        // Acceder correctamente a los datos de la respuesta
+        setMisCanchas(canchasResponse.data.data || []);
+        setMisReviews(reviewsResponse.data.data || []);
+        setTodasLasCanchas(todasCanchasResponse.data.data || []);
       } catch (error) {
         console.error('Error fetching user data:', error);
         toast.error('Error al cargar los datos del usuario');
@@ -76,6 +81,7 @@ const Dashboard = () => {
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
           <Tabs value={activeTab} onChange={handleTabChange}>
+            <Tab label="Todas las Canchas" />
             <Tab label="Mis Canchas" />
             <Tab label="Mis Reseñas" />
           </Tabs>
@@ -91,6 +97,17 @@ const Dashboard = () => {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <ListaCancha 
+                    canchas={todasLasCanchas} 
+                    isOwner={false}
+                    emptyMessage="No hay canchas disponibles"
+                  />
+                </Grid>
+              </Grid>
+            )}
+            {activeTab === 1 && (
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <ListaCancha 
                     canchas={misCanchas} 
                     isOwner={true}
                     emptyMessage="No tienes canchas registradas"
@@ -98,7 +115,7 @@ const Dashboard = () => {
                 </Grid>
               </Grid>
             )}
-            {activeTab === 1 && (
+            {activeTab === 2 && (
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   {misReviews.length > 0 ? (

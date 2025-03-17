@@ -290,12 +290,11 @@ const getUserCanchas = async (req, res) => {
     const result = await db.query(
       `SELECT c.*, 
         COALESCE(AVG(r.rating), 0) as rating,
-        COUNT(r.review_id) as num_reviews
+        COUNT(r.id) as num_reviews
       FROM canchas c
       LEFT JOIN reviews r ON c.id = r.cancha_id
-      WHERE c.user_id = $1
       GROUP BY c.id`,
-      [req.user.id]
+      []
     );
 
     return res.status(200).json(result.rows);
@@ -312,9 +311,9 @@ const getUserReviews = async (req, res) => {
       `SELECT r.*, c.nombre as cancha_nombre
       FROM reviews r
       JOIN canchas c ON r.cancha_id = c.id
-      WHERE r.user_id = $1
-      ORDER BY r.created_at DESC`,
-      [req.user.id]
+      WHERE r.name = $1
+      ORDER BY r.id DESC`,
+      [req.user.user_name]
     );
 
     return res.status(200).json(result.rows);

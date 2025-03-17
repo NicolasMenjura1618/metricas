@@ -12,20 +12,23 @@ const getAllReviews = async (req, res) => {
 };
 
 // Crear una nueva review
-const createReview = async (req, res) => {
+const createReview = async (reviewData) => {
+  console.log('Received review data:', reviewData); // Log incoming review data
+
   try {
-    const { cancha_id, name, review, rating } = req.body;
+    const { cancha_id, name, comentario, rating } = reviewData;
 
     const result = await pool.query(
       `INSERT INTO reviews (cancha_id, name, review, rating)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [cancha_id, name, review, rating]
+      [cancha_id, name, comentario, rating]
     );
 
-    return res.status(201).json({ data: result.rows[0] });
+    return { data: result.rows[0] };
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error('Error in createReview:', error);
+    return null;
   }
 };
 

@@ -6,28 +6,16 @@ const reviewRoutes = require('./reviewRoutes');
 const auth = require('../middlewares/auth');
 
 // Public routes
-router.use('/canchas', canchaRoutes);  // Allow public access to canchas listing
 router.use('/users', userRoutes);      // For login/register
 
-// Protected routes that require authentication
-router.use('/users/me', auth, (req, res, next) => {
-  if (req.path === '/canchas') {
-    return userRoutes.getUserCanchas(req, res, next);
-  } else if (req.path === '/reviews') {
-    return userRoutes.getUserReviews(req, res, next);
-  }
-  next();
-});
+// Mount cancha routes - public GET routes and protected other methods
+router.use('/canchas', canchaRoutes);  // This will handle both public and protected routes as defined in canchaRoutes.js
 
 // Protected routes for reviews
 router.use('/reviews', auth, reviewRoutes);
 
-// Protected routes for cancha operations (create, update, delete)
-router.use('/canchas/:id', auth, (req, res, next) => {
-  if (req.method !== 'GET') {  // Allow GET requests without auth
-    return canchaRoutes.router(req, res, next);
-  }
-  next();
-});
+// Protected user-specific routes
+// These routes should be defined in userRoutes and mounted here
+router.use('/users/me', auth, userRoutes);
 
 module.exports = router;
