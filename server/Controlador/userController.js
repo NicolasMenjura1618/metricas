@@ -1,4 +1,4 @@
-const pool = require('../db');
+const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -22,10 +22,6 @@ const validateEmail = (email) => {
 
 const validatePassword = (password) => {
   if (!password) return 'La contraseña es requerida';
-  if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres';
-  if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
-    return 'La contraseña debe contener al menos una mayúscula, una minúscula y un número';
-  }
   return null;
 };
 
@@ -45,7 +41,7 @@ const createUser = async (req, res) => {
     if (passwordError) return res.status(400).json({ message: passwordError });
 
     // Verificar si el usuario ya existe
-    const userExists = await pool.query(
+    const userExists = await db.query(
       'SELECT * FROM users WHERE user_name = $1 OR user_email = $2', 
       [user_name, user_email]
     );
@@ -64,7 +60,7 @@ const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(user_password, 10);
 
 
-    const result = await pool.query(
+    const result = await db.query(
       'INSERT INTO users (user_name, user_password, user_email) VALUES ($1, $2, $3) RETURNING user_id, user_name, user_email',
       [user_name, hashedPassword, user_email]
     );
@@ -84,28 +80,60 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Validaciones básicas
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Correo electrónico y contraseña son requeridos' });
+    // Test database connection first
+    const isConnected = await db.testConnection();
+    if (!isConnected) {
+      console.error('Database connection failed during login attempt');
+      return res.status(500).json({ 
+        message: 'Error de conexión con la base de datos',
+        error: 'DATABASE_CONNECTION_ERROR'
+      });
     }
 
-    const result = await pool.query('SELECT * FROM users WHERE user_email = $1', [email]);
+    // Validaciones básicas
+    if (!email || !password) {
+      return res.status(400).json({ 
+        message: 'Correo electrónico y contraseña son requeridos',
+        error: 'VALIDATION_ERROR'
+      });
+    }
+
+    // Buscar usuario
+    const result = await db.query('SELECT * FROM users WHERE user_email = $1', [email]);
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(401).json({ message: 'Correo electrónico o contraseña incorrectos' });
+      return res.status(401).json({ 
+        message: 'Correo electrónico o contraseña incorrectos',
+        error: 'INVALID_CREDENTIALS'
+      });
+    }
+
+    // Verificar que existe contraseña
+    if (!user.user_password) {
+      console.error('Usuario encontrado sin contraseña:', email);
+      return res.status(401).json({ 
+        message: 'Error en la autenticación',
+        error: 'INVALID_USER_DATA'
+      });
     }
 
     // Verificar contraseña
     const validPassword = await bcrypt.compare(password, user.user_password);
-    
-    // Asegurarse de que la contraseña se maneje de manera coherente
-    if (!user.user_password) {
-        return res.status(401).json({ message: 'Correo electrónico o contraseña incorrectos' });
+    if (!validPassword) {
+      return res.status(401).json({ 
+        message: 'Correo electrónico o contraseña incorrectos',
+        error: 'INVALID_CREDENTIALS'
+      });
     }
 
-    if (!validPassword) {
-      return res.status(401).json({ message: 'Correo electrónico o contraseña incorrectos' });
+    // Verificar JWT_SECRET
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET no está configurado');
+      return res.status(500).json({ 
+        message: 'Error en la configuración del servidor',
+        error: 'SERVER_CONFIG_ERROR'
+      });
     }
 
     // Generar JWT token
@@ -127,8 +155,24 @@ const loginUser = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error en login:', error);
-    return res.status(500).json({ message: 'Error al iniciar sesión' });
+    console.error('Error detallado en login:', {
+      error: error.message,
+      stack: error.stack,
+      email: email // Log email for debugging
+    });
+
+    // Determinar tipo de error
+    if (error.code === '28P01') {
+      return res.status(500).json({ 
+        message: 'Error de autenticación con la base de datos',
+        error: 'DB_AUTH_ERROR'
+      });
+    }
+
+    return res.status(500).json({ 
+      message: 'Error al iniciar sesión',
+      error: 'SERVER_ERROR'
+    });
   }
 };
 
@@ -137,7 +181,7 @@ const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
+    const result = await db.query(
       'SELECT user_id, user_name, user_email FROM users WHERE user_id = $1', 
       [id]
     );
@@ -180,7 +224,7 @@ const updateUser = async (req, res) => {
       hashedPassword = await bcrypt.hash(user_password, salt);
     }
 
-    const result = await pool.query(
+    const result = await db.query(
       'UPDATE users SET user_name = $1, user_password = $2, user_email = $3 WHERE user_id = $4 RETURNING user_id, user_name, user_email',
       [user_name, hashedPassword, user_email, id]
     );
@@ -200,7 +244,7 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query('DELETE FROM users WHERE user_id = $1 RETURNING *', [id]);
+    const result = await db.query('DELETE FROM users WHERE user_id = $1 RETURNING *', [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -213,7 +257,7 @@ const deleteUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const result = await pool.query('SELECT user_id, user_name, user_email FROM users');
+    const result = await db.query('SELECT user_id, user_name, user_email FROM users');
     return res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
@@ -224,7 +268,7 @@ const getAllUsers = async (req, res) => {
 // Get user profile
 const getUserProfile = async (req, res) => {
   try {
-    const result = await pool.query(
+    const result = await db.query(
       'SELECT user_id, user_name, user_email FROM users WHERE user_id = $1',
       [req.user.id]
     );
@@ -243,7 +287,7 @@ const getUserProfile = async (req, res) => {
 // Get user's canchas
 const getUserCanchas = async (req, res) => {
   try {
-    const result = await pool.query(
+    const result = await db.query(
       `SELECT c.*, 
         COALESCE(AVG(r.rating), 0) as rating,
         COUNT(r.review_id) as num_reviews
@@ -264,7 +308,7 @@ const getUserCanchas = async (req, res) => {
 // Get user's reviews
 const getUserReviews = async (req, res) => {
   try {
-    const result = await pool.query(
+    const result = await db.query(
       `SELECT r.*, c.nombre as cancha_nombre
       FROM reviews r
       JOIN canchas c ON r.cancha_id = c.id

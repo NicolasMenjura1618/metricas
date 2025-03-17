@@ -2,11 +2,24 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'http://localhost:3001/api',
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
+
+// Add error handling for network issues
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (!error.response) {
+      console.error('Network Error:', error);
+      toast.error('Error de conexión. Por favor, verifique su conexión a internet.');
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Request interceptor
 api.interceptors.request.use(
@@ -29,9 +42,11 @@ api.interceptors.response.use(
     const message = error.response?.data?.message || 'Ha ocurrido un error';
     
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-      toast.error('Sesión expirada. Por favor, inicie sesión nuevamente.');
+      if (!window.location.pathname.includes('/login')) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        toast.error('Sesión expirada. Por favor, inicie sesión nuevamente.');
+      }
     } else {
       toast.error(message);
     }
@@ -42,7 +57,8 @@ api.interceptors.response.use(
 
 export const authAPI = {
   login: (credentials) => api.post('/users/login', credentials),
-  // Add other auth-related endpoints here
+  register: (userData) => api.post('/users', userData),
+  getProfile: () => api.get('/users/me'),
 };
 
 export const canchasAPI = {

@@ -1,8 +1,17 @@
 import React, { useState } from "react";
-import BuscaCanchas from "../apis/BuscaCanchas";
 import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { CanchasContext } from "../context/contextCanchas";
+import { reviewsAPI } from '../services/api';
+import { 
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Rating,
+  Paper
+} from '@mui/material';
+import { toast } from 'react-toastify';
 
 const AddReview = ({ cancha, onAddReview }) => {
   const { id } = useParams();
@@ -13,88 +22,86 @@ const AddReview = ({ cancha, onAddReview }) => {
   const [review, setReview] = useState("");
 
   const handleSubmit = async (e) => {
-    console.log("Submitting review for cancha ID:", id);
     e.preventDefault();
     try {
-      const response = await BuscaCanchas.post(`/${id}/AddReview`, {
-        cancha_id: id,
+      const response = await reviewsAPI.create(id, {
         name,
         rating,
-        review,
+        comentario: review,
       });
 
-      // Construye el objeto de reseña usando el name ingresado
       const newReview = {
-        id: response.data.data.id,
-        name, // Usa el valor del estado, es decir, el nombre ingresado
+        id: response.data.id,
+        name,
         rating,
-        review,
+        comentario: review,
+        fecha: new Date().toISOString()
       };
 
-      // Notify parent component of the new review
       if (onAddReview) {
         onAddReview(newReview);
       }
 
-      // Limpia el formulario tras enviar la reseña
+      toast.success('Reseña agregada exitosamente');
+
+      // Reset form
       setNombre("");
       setRating(1);
       setReview("");
     } catch (error) {
-      console.error(
-        "Error al enviar la reseña:",
-        error.response ? error.response.data : error.message
-      );
+      console.error("Error al enviar la reseña:", error);
+      toast.error('Error al agregar la reseña');
     }
   };
 
   return (
-    <div className="card p-4 shadow-sm">
-      <h4 className="text-center text-primary">Agregar Reseña</h4>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Nombre</label>
-          <input
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={(e) => setNombre(e.target.value)}
-            required
-          />
-        </div>
+    <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
+      <Typography variant="h5" component="h2" gutterBottom color="primary">
+        Agregar Reseña
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+        <TextField
+          fullWidth
+          label="Nombre"
+          value={name}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+          margin="normal"
+        />
 
-        <div className="mb-3">
-          <label className="form-label">Calificación</label>
-          <select
-            className="form-select"
+        <Box sx={{ my: 2 }}>
+          <Typography component="legend">Calificación</Typography>
+          <Rating
+            name="rating"
             value={rating}
-            onChange={(e) => setRating(parseInt(e.target.value))}
-            required
-          >
-            <option value="1">⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="3">⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="5">⭐⭐⭐⭐⭐</option>
-          </select>
-        </div>
+            onChange={(event, newValue) => {
+              setRating(newValue);
+            }}
+          />
+        </Box>
 
-        <div className="mb-3">
-          <label className="form-label">Comentario</label>
-          <textarea
-            className="form-control"
-            rows="3"
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-            required
-          ></textarea>
-        </div>
+        <TextField
+          fullWidth
+          label="Comentario"
+          multiline
+          rows={4}
+          value={review}
+          onChange={(e) => setReview(e.target.value)}
+          required
+          margin="normal"
+        />
 
-        <button type="submit" className="btn btn-primary w-100">
+        <Button 
+          type="submit" 
+          variant="contained" 
+          color="primary" 
+          fullWidth 
+          sx={{ mt: 2 }}
+        >
           Enviar Reseña
-        </button>
-      </form>
-    </div>
+        </Button>
+      </Box>
+    </Paper>
   );
 };
 

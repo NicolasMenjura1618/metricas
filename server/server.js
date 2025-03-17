@@ -1,9 +1,7 @@
-// server/app.js
 const express = require('express');
 const cors = require('cors');
-const canchaRoutes = require('./rutas/canchaRoutes');
-const userRoutes = require('./rutas/userRoutes');
-const reviewRoutes = require('./rutas/reviewRoutes');
+const routes = require('./rutas');
+require('dotenv').config();
 
 const app = express();
 
@@ -11,21 +9,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rutas principales
-app.use('/api/canchas', canchaRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/reviews', reviewRoutes);
+// Mount all routes under /api
+app.use('/api', routes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.send('API de métricas de calidad funcionando');
 });
 
-app.use(express.static('public')); // Serve static files from the public directory
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    message: 'Ha ocurrido un error en el servidor',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
 
 // Inicializar servidor
-
-const PORT = process.env.PORT || 3000;
+const PORT = 3001;  // Fixed port to 3001
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
