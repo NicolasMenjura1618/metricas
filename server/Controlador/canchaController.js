@@ -65,7 +65,7 @@ const createCancha = async (req, res) => {
       });
     }
 
-    const { nombre, direccion, description, location, precio } = req.body;
+    const { nombre, direccion, description, location  } = req.body;
     const user_id = req.user?.id; // Get user_id from auth middleware
 
     if (!user_id) {
@@ -78,15 +78,13 @@ const createCancha = async (req, res) => {
     const result = await pool.query(
       `INSERT INTO canchas (
         nombre, 
-        direccion, 
-        description, 
+        description,
         location, 
-        precio,
-        created_at
+        direccion, 
       )
-      VALUES ($1, $2, $3, $4, $5, NOW())
+      VALUES ($1, $2, $3, $4)
       RETURNING *`,
-      [nombre, direccion, description, location, precio]
+      [nombre, description, location, direccion]
     );
 
     return res.status(201).json({
@@ -180,7 +178,7 @@ const updateCancha = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, direccion, description, location, precio } = req.body;
+    const { nombre, description, location, direccion} = req.body;
     const user_id = req.user?.id;
 
     if (!user_id) {
@@ -207,14 +205,12 @@ const updateCancha = async (req, res) => {
     const result = await pool.query(
       `UPDATE canchas
        SET nombre = $1,
-           direccion = $2,
-           description = $3,
-           location = $4,
-           precio = $5,
-           updated_at = NOW()
-       WHERE id = $6
+           description = $2,
+           location = $3,
+           direccion = $4,
+       WHERE id = $5
        RETURNING *`,
-      [nombre, direccion, description, location, precio, id]
+      [nombre, description, location, direccion,  id]
     );
 
     return res.status(200).json({
