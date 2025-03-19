@@ -82,7 +82,6 @@ const Dashboard = () => {
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
           <Tabs value={activeTab} onChange={handleTabChange}>
             <Tab label="Todas las Canchas" />
-            <Tab label="Mis Canchas" />
             <Tab label="Mis Reseñas" />
           </Tabs>
         </Box>

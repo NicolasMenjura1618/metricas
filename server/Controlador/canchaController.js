@@ -80,7 +80,7 @@ const createCancha = async (req, res) => {
         nombre, 
         description,
         location, 
-        direccion, 
+        direccion
       )
       VALUES ($1, $2, $3, $4)
       RETURNING *`,
@@ -207,7 +207,7 @@ const updateCancha = async (req, res) => {
        SET nombre = $1,
            description = $2,
            location = $3,
-           direccion = $4,
+           direccion = $4
        WHERE id = $5
        RETURNING *`,
       [nombre, description, location, direccion,  id]

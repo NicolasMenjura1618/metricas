@@ -14,7 +14,8 @@ import {
 
 import { toast } from 'react-toastify';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3001/api';
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -87,7 +88,8 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/users`, formData);
+      const response = await axios.post(`${API_URL}/users/register`, formData);
+
       
       if (response.data) {
         toast.success('¡Registro exitoso! Ahora puedes iniciar sesión.');

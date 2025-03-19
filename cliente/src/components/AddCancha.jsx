@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { toast } from 'react-toastify'; // Moved import for consistency
-
+import { canchasAPI } from '../services/api'; 
 import { CanchasContext } from "../context/contextCanchas"; // Import the context
-import BuscaCanchas from "../apis/BuscaCanchas";
+
 
 function AddCancha() {
   const [nombre, setNombre] = useState("");
@@ -15,17 +15,16 @@ function AddCancha() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await BuscaCanchas.post("/v1/canchas", {
+       // setLoading(true);
 
-        nombre,
-        descripcion,
-        locacion,
-        direccion
-      });
-      console.log("API Response:", response);
+              const canchasResponse = await canchasAPI.create({
+                nombre,
+                locacion,
+                direccion,
+                descripcion
+              });
 
-      const newResponse = await BuscaCanchas.get("/");
-      setCanchas(newResponse.data.data.Canchas); // Update the context with the new list
+      setCanchas(canchasResponse.data); // Update the context with the new list
 
       // Notify user of successful addition
       notify("Cancha creada"); // Updated message
