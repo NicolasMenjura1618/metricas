@@ -14,7 +14,6 @@ const checkDatabaseConnection = async () => {
 // Obtener todas las canchas con ratings y número de reviews
 const getAllCanchas = async (req, res) => {
   try {
-    // Check database connection first
     const isConnected = await checkDatabaseConnection();
     if (!isConnected) {
       return res.status(500).json({ 
@@ -40,7 +39,6 @@ const getAllCanchas = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en getAllCanchas:', error);
-
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al obtener las canchas'
@@ -59,7 +57,7 @@ const createCancha = async (req, res) => {
       });
     }
 
-    const { nombre, direccion, descripcion, location  } = req.body;
+    const { nombre, direccion, descripcion, location } = req.body;
     const user_id = req.user?.id; // Get user_id from auth middleware
 
     if (!user_id) {
@@ -74,10 +72,11 @@ const createCancha = async (req, res) => {
         nombre, 
         descripcion,
         location, 
-        direccion)
-      VALUES ($1, $2, $3, $4)
+        direccion,
+        user_id)  // Associate cancha with user_id
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *`,
-      [nombre, descripcion, location, direccion]
+      [nombre, descripcion, location, direccion, user_id]
     );
 
     return res.status(201).json({
@@ -86,7 +85,6 @@ const createCancha = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en createCancha:', error);
-
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al crear la cancha'
@@ -94,7 +92,6 @@ const createCancha = async (req, res) => {
   }
 };
 
-// Obtener una cancha por ID con sus reviews
 const getCanchaById = async (req, res) => {
   try {
     const isConnected = await checkDatabaseConnection();
@@ -141,7 +138,6 @@ const getCanchaById = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en getCanchaById:', error);
-
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al obtener la cancha'
@@ -161,7 +157,7 @@ const updateCancha = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, descripcion, location, direccion} = req.body;
+    const { nombre, descripcion, location, direccion } = req.body;
     const user_id = req.user?.id;
 
     if (!user_id) {
@@ -173,7 +169,7 @@ const updateCancha = async (req, res) => {
 
     // Verify ownership
     const ownerCheck = await pool.query(
-      'SELECT id FROM canchas WHERE id = $1',
+      'SELECT user_id FROM canchas WHERE id = $1',
       [id]
     );
 
@@ -181,7 +177,7 @@ const updateCancha = async (req, res) => {
       return res.status(404).json({ message: 'Cancha no encontrada' });
     }
 
-    if (ownerCheck.rows[0].id !== user_id) {
+    if (ownerCheck.rows[0].user_id !== user_id) {
       return res.status(403).json({ message: 'No autorizado para actualizar esta cancha' });
     }
 
@@ -193,7 +189,7 @@ const updateCancha = async (req, res) => {
            direccion = $4
        WHERE id = $5
        RETURNING *`,
-      [nombre, descripcion, location, direccion,  id]
+      [nombre, descripcion, location, direccion, id]
     );
 
     return res.status(200).json({
@@ -202,7 +198,6 @@ const updateCancha = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en updateCancha:', error);
-
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al actualizar la cancha'
@@ -233,7 +228,7 @@ const deleteCancha = async (req, res) => {
 
     // Verify ownership
     const ownerCheck = await pool.query(
-      'SELECT id FROM canchas WHERE id = $1',
+      'SELECT user_id FROM canchas WHERE id = $1',
       [id]
     );
 
@@ -241,7 +236,7 @@ const deleteCancha = async (req, res) => {
       return res.status(404).json({ message: 'Cancha no encontrada' });
     }
 
-    if (ownerCheck.rows[0].id !== user_id) {
+    if (ownerCheck.rows[0].user_id !== user_id) {
       return res.status(403).json({ message: 'No autorizado para eliminar esta cancha' });
     }
 
@@ -256,9 +251,6 @@ const deleteCancha = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en deleteCancha:', error);
-    console.log('Attempting to delete cancha with ID:', id, 'by user ID:', user_id);
-
-
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al eliminar la cancha'

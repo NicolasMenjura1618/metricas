@@ -17,8 +17,14 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    req.user = decoded; // Attach user info to request
+
+    // Check if the user is trying to access their own data
+    if (req.params.user_id && req.params.user_id !== decoded.id) {
+      return res.status(403).json({ status: "error", message: "Acceso denegado" });
+    }
+
+    next(); // Allow access to the next middleware or route handler
   } catch (err) {
     return res
       .status(401)

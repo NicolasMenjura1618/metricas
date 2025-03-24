@@ -181,6 +181,11 @@ const getUserById = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Check if the user is trying to access their own data
+    if (id !== req.user.id) {
+      return res.status(403).json({ message: 'Acceso denegado' });
+    }
+
     const result = await db.query(
       'SELECT user_id, user_name, user_email FROM users WHERE user_id = $1', 
       [id]
@@ -196,12 +201,19 @@ const getUserById = async (req, res) => {
   }
 };
 
+
+
 // Update user
 const updateUser = async (req, res) => {
   const { id } = req.params;
   const { user_name, user_password, user_email } = req.body;
 
   try {
+    // Check if the user is trying to update their own data
+    if (id !== req.user.id) {
+      return res.status(403).json({ message: 'Acceso denegado' });
+    }
+
     // Validaciones si se proporcionan los campos
     if (user_name) {
       const usernameError = validateUsername(user_name);
@@ -239,11 +251,18 @@ const updateUser = async (req, res) => {
   }
 };
 
+
+
 // Delete user
 const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Check if the user is trying to delete their own account
+    if (id !== req.user.id) {
+      return res.status(403).json({ message: 'Acceso denegado' });
+    }
+
     const result = await db.query('DELETE FROM users WHERE user_id = $1 RETURNING *', [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -254,6 +273,7 @@ const deleteUser = async (req, res) => {
     return res.status(500).json({ message: 'Error al eliminar el usuario' });
   }
 };
+
 
 const getAllUsers = async (req, res) => {
   try {

@@ -28,4 +28,10 @@ router.get('/:user_id', auth, getUserById);     // GET /api/users/:user_id
 router.put('/:user_id', auth, updateUser);      // PUT /api/users/:user_id
 router.delete('/:user_id', auth, deleteUser);   // DELETE /api/users/:user_id
 
+// Allow normal users to access their own data
+router.get('/me', auth, getUserProfile);        // GET /api/users/me
+router.put('/me', auth, updateUser);             // PUT /api/users/me
+router.delete('/me', auth, deleteUser);          // DELETE /api/users/me
+
+
 module.exports = router;

@@ -9,11 +9,7 @@ const {
 } = require('../Controlador/reviewController');
 
 
-// CRUD Reviews
-router.get('/', getAllReviews);        // GET /api/reviews
-router.post('/', createReview);        // POST /api/reviews
-router.get('/:id', getReviewById);     // GET /api/reviews/:id
-router.put('/:id', updateReview);      // PUT /api/reviews/:id
-router.delete('/:id', deleteReview);   // DELETE /api/reviews/:id
+router.get('/cancha/:cancha_id', getReviewsByCanchaId); // GET /api/reviews/cancha/:cancha_id
+
 
 module.exports = router;

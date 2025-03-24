@@ -37,7 +37,7 @@ const DetallesCancha = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             startIcon={<ArrowBackIcon />}
             variant="outlined"
             sx={{ mb: 3 }}
@@ -86,7 +86,7 @@ const DetallesCancha = () => {
               />
 
               <Reviews
-                reviews={canchaSelect.Reviews || []}
+                reviews={canchaSelect.Reviews} // Use reviews directly from canchaSelect
                 onDelete={(reviewId) =>
                   setSelectCancha((prev) => ({
                     ...prev,
@@ -94,6 +94,7 @@ const DetallesCancha = () => {
                   }))
                 }
               />
+
             </Box>
           ) : (
             <Typography variant="body1" color="textSecondary">
