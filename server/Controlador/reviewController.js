@@ -1,4 +1,3 @@
-// server/controladores/reviewController.js
 const pool = require('../db');
 
 // Obtener todas las reviews
@@ -16,13 +15,13 @@ const createReview = async (reviewData) => {
   console.log('Received review data:', reviewData); // Log incoming review data
 
   try {
-    const { cancha_id, name, comentario, rating } = reviewData;
+    const { cancha_id, name, review, rating } = reviewData;
 
     const result = await pool.query(
       `INSERT INTO reviews (cancha_id, name, review, rating)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [cancha_id, name, comentario, rating]
+      [cancha_id, name, review, rating]
     );
 
     return { data: result.rows[0] };

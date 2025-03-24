@@ -40,13 +40,7 @@ const getAllCanchas = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en getAllCanchas:', error);
-    // Log detailed error information
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      query: error.query,
-      parameters: error.parameters
-    });
+
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al obtener las canchas'
@@ -65,7 +59,7 @@ const createCancha = async (req, res) => {
       });
     }
 
-    const { nombre, direccion, description, location  } = req.body;
+    const { nombre, direccion, descripcion, location  } = req.body;
     const user_id = req.user?.id; // Get user_id from auth middleware
 
     if (!user_id) {
@@ -78,13 +72,12 @@ const createCancha = async (req, res) => {
     const result = await pool.query(
       `INSERT INTO canchas (
         nombre, 
-        description,
+        descripcion,
         location, 
-        direccion
-      )
+        direccion)
       VALUES ($1, $2, $3, $4)
       RETURNING *`,
-      [nombre, description, location, direccion]
+      [nombre, descripcion, location, direccion]
     );
 
     return res.status(201).json({
@@ -93,12 +86,7 @@ const createCancha = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en createCancha:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      query: error.query,
-      parameters: error.parameters
-    });
+
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al crear la cancha'
@@ -153,12 +141,7 @@ const getCanchaById = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en getCanchaById:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      query: error.query,
-      parameters: error.parameters
-    });
+
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al obtener la cancha'
@@ -178,7 +161,7 @@ const updateCancha = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, description, location, direccion} = req.body;
+    const { nombre, descripcion, location, direccion} = req.body;
     const user_id = req.user?.id;
 
     if (!user_id) {
@@ -205,12 +188,12 @@ const updateCancha = async (req, res) => {
     const result = await pool.query(
       `UPDATE canchas
        SET nombre = $1,
-           description = $2,
+           descripcion = $2,
            location = $3,
            direccion = $4
        WHERE id = $5
        RETURNING *`,
-      [nombre, description, location, direccion,  id]
+      [nombre, descripcion, location, direccion,  id]
     );
 
     return res.status(200).json({
@@ -219,12 +202,7 @@ const updateCancha = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en updateCancha:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      query: error.query,
-      parameters: error.parameters
-    });
+
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al actualizar la cancha'
@@ -278,12 +256,9 @@ const deleteCancha = async (req, res) => {
     });
   } catch (error) {
     console.error('Error en deleteCancha:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      query: error.query,
-      parameters: error.parameters
-    });
+    console.log('Attempting to delete cancha with ID:', id, 'by user ID:', user_id);
+
+
     return res.status(500).json({ 
       error: error.message,
       message: 'Error al eliminar la cancha'
