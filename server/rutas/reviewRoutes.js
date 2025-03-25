@@ -10,7 +10,8 @@ const {
 } = require('../Controlador/reviewController');
 
 
-router.get('/cancha/:cancha_id', getReviewsByCanchaId); // GET /api/reviews/cancha/:cancha_id
+router.get('/cancha/:id', getReviewsByCanchaId); // GET /api/reviews/cancha/:id
+
 
 
 module.exports = router;

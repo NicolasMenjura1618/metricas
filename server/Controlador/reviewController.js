@@ -134,12 +134,19 @@ const deleteReview = async (req, res) => {
 
 // New function to get reviews by cancha_id
 const getReviewsByCanchaId = async (req, res) => {
-  const { cancha_id } = req.params; // Get cancha_id from route parameters
+  console.log('getReviewsByCanchaId called with params:', req.params); // Log the parameters received
+
+  const { id } = req.params; // Use "id" because that's how the route is defined
+
   try {
-    const result = await pool.query('SELECT * FROM reviews WHERE cancha_id = $1', [cancha_id]);
+    const result = await pool.query('SELECT * FROM reviews WHERE cancha_id = $1', [id]); 
+    console.log('Query result:', result.rows); // Log the result of the query
+
+
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'No reviews found for this cancha' });
+      return res.status(200).json({ data: [] }); // Return 200 with an empty array if no reviews found
+
     }
 
     return res.status(200).json({ data: result.rows });
@@ -156,4 +163,3 @@ module.exports = {
   deleteReview,
   getReviewsByCanchaId, // Export the new function
 };
-

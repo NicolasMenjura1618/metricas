@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { canchasAPI } from '../services/api';
 import AddReview from '../components/AddReview';
+import { reviewsAPI } from '../services/api';
 import Reviews from '../components/Reviews';
 
 const DetallesCancha = () => {
@@ -16,13 +17,25 @@ const DetallesCancha = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await canchasAPI.getById(id);
         setSelectCancha(response.data);
         console.log("Fetching cancha data for ID:", id);
+        const reviewsUrl = `http://localhost:3001/api/canchas/${id}/reviews`;
+        console.log(`Requesting reviews from: ${reviewsUrl}`);
+
+
+        // Fetch reviews for the selected cancha
+        const reviewsResponse = await reviewsAPI.getByCancha(id); 
+
+        setSelectCancha((prev) => ({
+          ...prev,
+          Reviews: reviewsResponse.data,
+        }));
       } catch (error) {
         console.error('Error fetching cancha:', error);
-        setError("Error al obtener los datos de la cancha.");
+        setError("Error al obtener los datos de la cancha o las reseñas.");
       } finally {
         setLoading(false);
       }

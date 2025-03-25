@@ -8,7 +8,14 @@ const {
   updateCancha,
   deleteCancha
 } = require('../Controlador/canchaController');
+
+const { getReviewsByCanchaId } = require('../Controlador/reviewController');
+
+
+
 const { createReview } = require('../Controlador/reviewController');
+
+
 
 // Public routes
 router.get('/', getAllCanchas);       // GET /api/canchas - List all canchas
@@ -19,7 +26,8 @@ router.post('/', auth, createCancha);       // POST /api/canchas - Create new ca
 router.put('/:id', auth, updateCancha);     // PUT /api/canchas/:id - Update cancha
 router.delete('/:id', auth, deleteCancha);  // DELETE /api/canchas/:id - Delete cancha
 
-// Reviews routes
+router.get('/:id/reviews', getReviewsByCanchaId); // GET /api/canchas/:id/reviews
+
 router.post('/:id/reviews', auth, async (req, res) => {
   try {
     const cancha_id = req.params.id;

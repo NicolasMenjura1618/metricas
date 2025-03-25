@@ -68,7 +68,8 @@ export const canchasAPI = {
   update: (id, data) => api.put(`/canchas/${id}`, data),
   delete: (id) => api.delete(`/canchas/${id}`),
   getUserCanchas: () => api.get('/users/me/canchas'),
-  getReviewsByCanchaId: (canchaId) => api.get(`/reviews/cancha/${canchaId}`), // Update to the correct endpoint
+  getReviewsByCanchaId: (canchaId) => api.get(`/canchas/${canchaId}/reviews`), // Update to the correct endpoint
+
 
 
 };
