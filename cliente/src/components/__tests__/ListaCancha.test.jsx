@@ -16,13 +16,13 @@ const mockCanchas = [
     id: 1,
     nombre: 'Cancha 1',
     descripcion: 'Descripción 1',
-    precio: '100'
+    
   },
   {
     id: 2,
     nombre: 'Cancha 2',
     descripcion: 'Descripción 2',
-    precio: '200'
+    
   }
 ];
 
