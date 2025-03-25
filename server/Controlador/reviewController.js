@@ -132,10 +132,28 @@ const deleteReview = async (req, res) => {
   }
 };
 
+// New function to get reviews by cancha_id
+const getReviewsByCanchaId = async (req, res) => {
+  const { cancha_id } = req.params; // Get cancha_id from route parameters
+  try {
+    const result = await pool.query('SELECT * FROM reviews WHERE cancha_id = $1', [cancha_id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No reviews found for this cancha' });
+    }
+
+    return res.status(200).json({ data: result.rows });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllReviews,
   createReview,
   getReviewById,
   updateReview,
   deleteReview,
+  getReviewsByCanchaId, // Export the new function
 };
+</create_file>
