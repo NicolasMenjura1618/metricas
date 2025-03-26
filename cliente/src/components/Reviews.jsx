@@ -14,7 +14,11 @@ import { useAuth } from '../context/AuthContext';
 import { reviewsAPI } from '../services/api';
 import { toast } from 'react-toastify';
 
-const Reviews = ({ reviews = [], onDelete }) => {
+const Reviews = ({ reviews, onDelete }) => {
+  // Ensure reviews is an array
+  const validReviews = Array.isArray(reviews) ? reviews : []; // Ensure reviews is an array
+
+
   const { user } = useAuth();
 
   const handleDelete = async (canchaId, reviewId) => {
@@ -30,11 +34,13 @@ const Reviews = ({ reviews = [], onDelete }) => {
     }
   };
 
-  if (!reviews.length) {
+  if (!validReviews.length) {
+
     return (
       <Paper elevation={1} sx={{ p: 3, mt: 3 }}>
         <Typography variant="body1" color="textSecondary" align="center">
-          No hay reseñas disponibles
+          No hay reseñas disponibles. Por favor, agrega una reseña.
+
         </Typography>
       </Paper>
     );
@@ -65,7 +71,8 @@ const Reviews = ({ reviews = [], onDelete }) => {
                   </Typography>
                   <Rating value={review.rating} readOnly size="small" />
                 </Box>
-                {user && (user.id === review.user_id || user.isAdmin) && (
+                {user && (user.isAdmin) && (
+
                   <IconButton
                     size="small"
                     color="error"
@@ -75,11 +82,13 @@ const Reviews = ({ reviews = [], onDelete }) => {
                   </IconButton>
                 )}
               </Box>
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                {review.comentario}
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    {review.review}
+
               </Typography>
               <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
-                {new Date(review.fecha).toLocaleDateString()}
+                {review.fecha ? new Date(review.fecha).toLocaleDateString() : 'Fecha no disponible'}
+
               </Typography>
             </ListItem>
             {index < reviews.length - 1 && <Divider />}

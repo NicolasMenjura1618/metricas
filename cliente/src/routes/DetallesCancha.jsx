@@ -23,15 +23,16 @@ const DetallesCancha = () => {
         setSelectCancha(response.data);
         console.log("Fetching cancha data for ID:", id);
         const reviewsUrl = `http://localhost:3001/api/canchas/${id}/reviews`;
-        console.log(`Requesting reviews from: ${reviewsUrl}`);
+        console.log(`Requesting reviews from: ${reviewsUrl}`); // Log the reviews URL for debugging
+        console.log('Fetching reviews for cancha ID:', id); // Log the ID for which reviews are being fetched
 
 
         // Fetch reviews for the selected cancha
-        const reviewsResponse = await reviewsAPI.getByCancha(id); 
+        const reviewsResponse = await reviewsAPI.getByCancha(id); // Fetch reviews for the selected cancha
 
         setSelectCancha((prev) => ({
           ...prev,
-          Reviews: reviewsResponse.data,
+          Reviews: reviewsResponse.data || [], // Ensure Reviews is an array
         }));
       } catch (error) {
         console.error('Error fetching cancha:', error);
@@ -99,7 +100,8 @@ const DetallesCancha = () => {
               />
 
               <Reviews
-                reviews={canchaSelect.Reviews} // Use reviews directly from canchaSelect
+                reviews={canchaSelect.Reviews || []} // Ensure reviews is an array
+
                 onDelete={(reviewId) =>
                   setSelectCancha((prev) => ({
                     ...prev,
