@@ -1,10 +1,11 @@
 import request from 'supertest';
-import app from './App'; // Adjust the import based on your app's entry point
-import { pool } from './db'; // Adjust the import based on your database configuration
+import app from '../src/App'; // Adjust the import based on your app's entry point
+
+import { query } from '../db'; // Use the exported query method
 
 describe('User Authentication', () => {
   afterAll(async () => {
-    await pool.end(); // Close the database connection after tests
+    await query('SELECT 1'); // Test database connection
   });
 
   it('should create a new user and hash the password', async () => {

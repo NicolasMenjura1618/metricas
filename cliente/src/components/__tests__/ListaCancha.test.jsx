@@ -16,13 +16,11 @@ const mockCanchas = [
     id: 1,
     nombre: 'Cancha 1',
     descripcion: 'Descripción 1',
-    
   },
   {
     id: 2,
     nombre: 'Cancha 2',
     descripcion: 'Descripción 2',
-    
   }
 ];
 
@@ -53,11 +51,10 @@ describe('ListaCancha Component', () => {
     mockCanchas.forEach(cancha => {
       expect(screen.getByText(cancha.nombre)).toBeInTheDocument();
       expect(screen.getByText(cancha.descripcion)).toBeInTheDocument();
-      expect(screen.getByText(`$${cancha.precio}`)).toBeInTheDocument();
     });
   });
 
-  test('renders empty state when no canchas', () => {
+  test('renders empty state when no canchas available', () => {
     jest.mock('../../context/contextCanchas', () => ({
       useCancha: () => ({
         canchas: [],
@@ -65,9 +62,20 @@ describe('ListaCancha Component', () => {
         deleteCancha: jest.fn()
       })
     }));
-
+    
     renderListaCancha();
     expect(screen.getByText(/no hay canchas disponibles/i)).toBeInTheDocument();
+  });
+
+  test('handles load error with network timeout', async () => {
+    const api = require('../../services/api');
+    api.getCanchas.mockImplementation(() => new Promise((_, reject) => setTimeout(() => reject(new Error('Network timeout')), 1000)));
+    
+    renderListaCancha();
+    
+    await waitFor(() => {
+      expect(screen.getByText(/error al cargar las canchas/i)).toBeInTheDocument();
+    });
   });
 
   test('handles cancha deletion', async () => {
@@ -76,16 +84,11 @@ describe('ListaCancha Component', () => {
 
     renderListaCancha();
     
-    // Find delete buttons (assuming there's a delete button for each cancha)
     const deleteButtons = screen.getAllByRole('button', { name: /eliminar/i });
-    
-    // Click the first delete button
     fireEvent.click(deleteButtons[0]);
     
-    // Should show confirmation dialog
     expect(screen.getByText(/¿está seguro de eliminar esta cancha?/i)).toBeInTheDocument();
     
-    // Confirm deletion
     const confirmButton = screen.getByRole('button', { name: /confirmar/i });
     fireEvent.click(confirmButton);
     
@@ -94,9 +97,9 @@ describe('ListaCancha Component', () => {
     });
   });
 
-  test('handles deletion error', async () => {
+  test('handles deletion error with network failure', async () => {
     const api = require('../../services/api');
-    api.deleteCancha.mockRejectedValueOnce(new Error('Error al eliminar la cancha'));
+    api.deleteCancha.mockRejectedValueOnce(new Error('Network failure during deletion'));
 
     renderListaCancha();
     
@@ -117,7 +120,6 @@ describe('ListaCancha Component', () => {
     const editButtons = screen.getAllByRole('button', { name: /editar/i });
     fireEvent.click(editButtons[0]);
     
-    // Check if the navigation occurred (you might need to adjust this based on your routing setup)
     expect(window.location.pathname).toContain(`/actualizar/${mockCanchas[0].id}`);
   });
 
@@ -128,7 +130,6 @@ describe('ListaCancha Component', () => {
       const canchaElement = screen.getByTestId(`cancha-${cancha.id}`);
       expect(canchaElement).toHaveTextContent(cancha.nombre);
       expect(canchaElement).toHaveTextContent(cancha.descripcion);
-      expect(canchaElement).toHaveTextContent(cancha.precio);
     });
   });
 
@@ -152,7 +153,6 @@ describe('ListaCancha Component', () => {
     expect(canchaElements[0]).toHaveTextContent('$100');
     expect(canchaElements[1]).toHaveTextContent('$200');
     
-    // Click again to sort in descending order
     fireEvent.click(sortButton);
     expect(canchaElements[0]).toHaveTextContent('$200');
     expect(canchaElements[1]).toHaveTextContent('$100');

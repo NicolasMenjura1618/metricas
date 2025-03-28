@@ -3,6 +3,13 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import AddCancha from '../AddCancha';
+import { CanchasContext } from '../../context/contextCanchas'; // Import the context
+
+const mockContextValue = {
+  addCancha: jest.fn(),
+  canchas: []
+};
+
 
 // Mock the api service
 jest.mock('../../services/api', () => ({
@@ -18,6 +25,14 @@ jest.mock('../../context/contextCanchas', () => ({
 }));
 
 const renderAddCancha = () => {
+  return render(
+    <CanchasContext.Provider value={mockContextValue}> // Wrap in Provider
+      <BrowserRouter>
+        <AddCancha />
+      </BrowserRouter>
+    </CanchasContext.Provider>
+  );
+
   return render(
     <BrowserRouter>
       <AddCancha />

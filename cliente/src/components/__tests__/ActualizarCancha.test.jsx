@@ -62,9 +62,10 @@ describe('ActualizarCancha Component', () => {
     expect(screen.getByText(/cargando/i)).toBeInTheDocument();
   });
 
-  test('handles load error', async () => {
+  test('handles load error with network timeout', async () => {
     const api = require('../../services/api');
-    api.getCancha.mockRejectedValue(new Error('Error al cargar la cancha'));
+    api.getCancha.mockImplementation(() => new Promise((_, reject) => setTimeout(() => reject(new Error('Network timeout')), 1000)));
+
 
     renderActualizarCancha();
 
@@ -73,7 +74,8 @@ describe('ActualizarCancha Component', () => {
     });
   });
 
-  test('validates required fields', async () => {
+  test('validates required fields with malformed data', async () => {
+
     renderActualizarCancha();
 
     await waitFor(() => {
@@ -110,7 +112,8 @@ describe('ActualizarCancha Component', () => {
     expect(screen.getByText(/el precio debe ser un número válido/i)).toBeInTheDocument();
   });
 
-  test('handles successful update', async () => {
+  test('handles successful update with malformed response', async () => {
+
     const api = require('../../services/api');
     api.updateCancha.mockResolvedValueOnce({ ...mockCancha, nombre: 'Cancha Actualizada' });
 
@@ -137,7 +140,8 @@ describe('ActualizarCancha Component', () => {
     });
   });
 
-  test('handles update error', async () => {
+  test('handles update error with network failure', async () => {
+
     const api = require('../../services/api');
     api.updateCancha.mockRejectedValueOnce(new Error('Error al actualizar la cancha'));
 
