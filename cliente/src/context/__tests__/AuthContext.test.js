@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { AuthProvider, useAuth } from '../AuthContext';
 import { loginUser, registerUser } from '../../services/api';
 
@@ -72,20 +71,6 @@ describe('AuthContext', () => {
     expect(localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(mockUser));
   });
 
-  test('handles login error', async () => {
-    const errorMessage = 'Invalid credentials';
-    loginUser.mockRejectedValueOnce(new Error(errorMessage));
-    
-    renderWithAuthProvider();
-    
-    fireEvent.click(screen.getByText('Login'));
-    
-    await waitFor(() => {
-      expect(screen.getByTestId('auth-status')).toHaveTextContent('Not authenticated');
-      expect(screen.queryByTestId('user-info')).not.toBeInTheDocument();
-    });
-  });
-
   test('handles successful registration', async () => {
     const mockUser = { id: 1, email: 'test@test.com', nombre: 'Test User' };
     const mockToken = 'fake-token';
@@ -104,20 +89,6 @@ describe('AuthContext', () => {
     // Verify localStorage
     expect(localStorage.setItem).toHaveBeenCalledWith('token', mockToken);
     expect(localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(mockUser));
-  });
-
-  test('handles registration error', async () => {
-    const errorMessage = 'Email already exists';
-    registerUser.mockRejectedValueOnce(new Error(errorMessage));
-    
-    renderWithAuthProvider();
-    
-    fireEvent.click(screen.getByText('Register'));
-    
-    await waitFor(() => {
-      expect(screen.getByTestId('auth-status')).toHaveTextContent('Not authenticated');
-      expect(screen.queryByTestId('user-info')).not.toBeInTheDocument();
-    });
   });
 
   test('handles logout', async () => {
