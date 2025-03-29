@@ -57,7 +57,34 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const value = {
+const register = async (userData) => {
+  try {
+    const response = await authAPI.register(userData);
+    const { token, user } = response.data;
+
+    // Save token and user data to localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('userData', JSON.stringify(user));
+
+    // Set authorization header
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    // Update user state
+    setUser(user);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error in registration:', error);
+    return {
+      success: false,
+      error: error.response?.data?.message || 'Error during registration'
+    };
+  }
+};
+
+const value = {
+  register,
+
     user,
     loading,
     login,

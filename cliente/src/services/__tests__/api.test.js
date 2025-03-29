@@ -70,6 +70,43 @@ describe('API Service', () => {
   });
 
   describe('Cancha Operations', () => {
+    test('addCancha handles invalid input data', async () => {
+      const invalidCanchaData = {
+        nombre: '', // Invalid name
+        descripcion: 'Descripción de la cancha',
+        precio: -100 // Invalid price
+      };
+
+      await expect(addCancha(invalidCanchaData)).rejects.toThrow('Invalid input data');
+    });
+
+    test('loginUser handles expired token', async () => {
+      const expiredTokenError = { 
+        response: { 
+          status: 401,
+          data: { error: 'Token expirado' }
+        }
+      };
+      axios.post.mockRejectedValueOnce(expiredTokenError);
+
+      await expect(loginUser({
+        email: 'test@test.com',
+        password: 'password123'
+      })).rejects.toThrow('Token expirado');
+    });
+
+    test('API calls handle server errors', async () => {
+      const serverError = { 
+        response: { 
+          status: 500,
+          data: { error: 'Error del servidor' }
+        }
+      };
+      axios.get.mockRejectedValueOnce(serverError);
+
+      await expect(getCancha()).rejects.toThrow('Error del servidor');
+    });
+
     const token = 'fake-token';
     
     beforeEach(() => {

@@ -118,7 +118,36 @@ Generate a coverage report:
 npm test -- --coverage
 ```
 
-## Test Coverage Goals
+## Test Coverage Goals (Updated)
+- Minimum 80% line coverage
+- Minimum 70% branch coverage
+- Minimum 90% function coverage
+
+### Key Areas Covered (Updated)
+1. User Authentication
+   - Login/Logout flow
+   - Registration process
+   - Session management
+   - Authorization checks
+
+2. Cancha Management
+   - CRUD operations
+   - Form validations
+   - Data persistence
+   - Error handling
+
+3. Review System
+   - Rating submission
+   - Comment management
+   - User permissions
+   - Data validation
+
+4. UI Components
+   - Responsive behavior
+   - User interactions
+   - State management
+   - Error boundaries
+
 
 The test suite aims to maintain:
 - Minimum 80% line coverage
