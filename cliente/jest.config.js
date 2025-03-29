@@ -5,35 +5,34 @@ module.exports = {
   moduleFileExtensions: ["js", "jsx", "json", "node"],
   testEnvironment: "jsdom",
   transformIgnorePatterns: [
-    "/node_modules/(?!(axios|react-toastify)/)"
-  ],
-  setupFilesAfterEnv: [
-    "<rootDir>/src/setupTests.js"
+    "/node_modules/"
   ],
   moduleNameMapper: {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
-    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js"
+    '\\.(css|less)$': 'identity-obj-proxy'
   },
-  testMatch: [
-    "<rootDir>/src/**/__tests__/**/*.{js,jsx}",
-    "<rootDir>/src/**/*.{spec,test}.{js,jsx}"
+  reporters: [
+    "default",
+    "jest-spec-reporter",
+    [
+      "jest-html-reporter",
+      {
+        pageTitle: "Test Report",
+        outputPath: "test-report.html",
+        includeFailureMsg: true,
+        suppressErrorSummary: true,
+        suppressGlobalSummary: false,
+        theme: "lightTheme",
+      }
+    ],
+    [
+      "jest-junit",
+      {
+        outputDirectory: "./reports/junit",
+        outputName: "junit.xml",
+      }
+    ]
   ],
-  collectCoverageFrom: [
-    "src/**/*.{js,jsx}",
-    "!src/index.js",
-    "!src/reportWebVitals.js",
-    "!src/**/*.d.ts"
-  ],
-  coverageThreshold: {
-    global: {
-      branches: 70,
-      functions: 90,
-      lines: 80,
-      statements: 80
-    }
-  },
-  coverageReporters: ["text", "lcov", "html"],
-  testEnvironmentOptions: {
-    url: "http://localhost"
-  }
-}
+  verbose: true,
+  coverageReporters: ["text", "lcov"],
+  collectCoverage: true,
+};

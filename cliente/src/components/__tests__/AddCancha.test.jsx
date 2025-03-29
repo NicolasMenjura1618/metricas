@@ -53,7 +53,8 @@ describe('AddCancha Component', () => {
     expect(screen.getByRole('button', { name: /agregar cancha/i })).toBeInTheDocument();
   });
 
-  test('validates required fields', async () => {
+  test('validates required fields and empty name', async () => {
+
     renderAddCancha();
     const submitButton = screen.getByRole('button', { name: /agregar cancha/i });
     
@@ -78,7 +79,20 @@ describe('AddCancha Component', () => {
     });
   });
 
+  test('validates address format', async () => {
+    renderAddCancha();
+    const addressInput = screen.getByLabelText(/dirección/i);
+    
+    fireEvent.change(addressInput, { target: { value: 'invalid-address' } });
+    fireEvent.blur(addressInput);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/la dirección no es válida/i)).toBeInTheDocument();
+    });
+  });
+
   test('handles successful cancha creation', async () => {
+
     const mockCanchaData = {
       nombre: 'Cancha Test',
       descripcion: 'Descripción de prueba',
@@ -107,7 +121,20 @@ describe('AddCancha Component', () => {
     });
   });
 
+  test('validates location coordinates', async () => {
+    renderAddCancha();
+    const locationInput = screen.getByLabelText(/ubicación/i);
+    
+    fireEvent.change(locationInput, { target: { value: 'invalid-coordinates' } });
+    fireEvent.blur(locationInput);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/las coordenadas están fuera de rango/i)).toBeInTheDocument();
+    });
+  });
+
   test('handles creation error', async () => {
+
     const api = require('../../services/api');
     api.addCancha.mockRejectedValueOnce(new Error('Error al crear la cancha'));
 
