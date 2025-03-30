@@ -16,13 +16,7 @@ jest.mock('../../services/api', () => ({
   addCancha: jest.fn()
 }));
 
-// Mock the context
-jest.mock('../../context/contextCanchas', () => ({
-  useCancha: () => ({
-    addCancha: jest.fn(),
-    canchas: []
-  })
-}));
+
 
 const renderAddCancha = () => {
   return render(

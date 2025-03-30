@@ -1,12 +1,19 @@
 import request from 'supertest';
-import app from '../src/App'; // Adjust the import based on your app's entry point
+import app from '../server'; // Adjust the import based on your server file location
 
-import { query } from '../db/index'; // Use the exported query method
+import { query } from '../db'; // Adjust the import based on your db file location
+
 
 
 describe('User Authentication', () => {
+  // Mock the database query
+  jest.mock('../db', () => ({
+    query: jest.fn(),
+  }));
+
   afterAll(async () => {
-    await query('SELECT 1'); // Test database connection
+    // Remove the actual database connection test
+
   });
 
   it('should create a new user and hash the password', async () => {

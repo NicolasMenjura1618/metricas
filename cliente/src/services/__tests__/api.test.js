@@ -2,20 +2,7 @@ import axios from 'axios';
 import { loginUser, registerUser, getCancha, addCancha, updateCancha, deleteCancha } from '../api';
 
 // Mock axios
-jest.mock('axios', () => {
-  const mockAxios = jest.requireActual('axios');
-  mockAxios.create = jest.fn(() => mockAxios);
-  mockAxios.interceptors = {
-    request: {
-      use: jest.fn(),
-    },
-    response: {
-      use: jest.fn(),
-    },
-  };
-  return mockAxios;
-});
-
+jest.mock('axios');
 
 describe('API Service', () => {
   beforeEach(() => {

@@ -14,6 +14,7 @@ const ActualizarCancha = () => {
   const [locacion, setLocacion] = useState("");
   const [direccion, setDireccion] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [precio, setPrecio] = useState(""); // Added state for Precio
 
   // Obtención de datos en el useEffect
   useEffect(() => {
@@ -27,6 +28,7 @@ const ActualizarCancha = () => {
         setLocacion(CanchaX?.locacion || ""); 
         setDireccion(CanchaX?.direccion || ""); 
         setDescripcion(CanchaX?.descripcion || "");
+        setPrecio(CanchaX?.precio || ""); // Set Precio from fetched data
 
       } catch (error) {
         console.error("Error al obtener los datos de la cancha", error);
@@ -49,13 +51,14 @@ const ActualizarCancha = () => {
         locacion,
         direccion,
         descripcion,
+        precio, // Include Precio in the update
       }, {
           headers: {
               Authorization: `Bearer ${token}`, // Include the token in the request
           },
       });
       toast.success("Cancha actualizada exitosamente."); // Notify user of successful update
-      navigate("/");
+      navigate("/"); // Navigate after successful update
     } catch (error) {
       console.error("Error al actualizar la cancha", error);
       toast.error("Error al actualizar la cancha."); // User-friendly error message using toast
@@ -105,9 +108,52 @@ const ActualizarCancha = () => {
             className="form-control"
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="precio">Precio</label>
+
+
+
+
+
+
+
+
+
+
+
+
+          <input
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+            id="precio"
+            className="form-control"
+            type="text"
+          />
+        </div>
         <button type="submit" className="btn btn-primary">
           Actualizar Cancha
         </button>
+        <button type="button" className="btn btn-secondary" onClick={() => {
+          setNombre("");
+          setLocacion("");
+          setDireccion("");
+          setDescripcion("");
+          setPrecio(""); // Reset Precio field
+        }}>
+          Restablecer
+
+
+
+
+
+
+
+
+
+
+
+
+        </button> <!-- Added reset button -->
       </form>
     </div>
   );
