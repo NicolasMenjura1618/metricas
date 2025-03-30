@@ -34,10 +34,13 @@ jest.mock('../../context/contextCanchas', () => ({
 
 const renderListaCancha = () => {
   return render(
-    <BrowserRouter>
-      <ListaCancha />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <ListaCancha />
+      </BrowserRouter>
+    </AuthProvider>
   );
+
 };
 
 describe('ListaCancha Component', () => {

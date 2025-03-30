@@ -1,7 +1,8 @@
 import request from 'supertest';
 import app from '../src/App'; // Adjust the import based on your app's entry point
 
-import { query } from '../db'; // Use the exported query method
+import { query } from '../db/index'; // Use the exported query method
+
 
 describe('User Authentication', () => {
   afterAll(async () => {

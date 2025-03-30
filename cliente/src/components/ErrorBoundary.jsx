@@ -27,11 +27,13 @@ class ErrorBoundary extends Component {
       // Custom fallback UI in Spanish
       return (
         <div>
+          {this.props.children || <h2>Normal Component Render</h2>}
           <h2>Algo salió mal</h2>
           <p>Ha ocurrido un error inesperado</p>
           <button onClick={this.handleRetry}>Reintentar</button>
         </div>
       );
+
     }
 
     return this.props.children; 

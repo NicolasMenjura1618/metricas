@@ -33,11 +33,6 @@ const renderAddCancha = () => {
     </CanchasContext.Provider>
   );
 
-  return render(
-    <BrowserRouter>
-      <AddCancha />
-    </BrowserRouter>
-  );
 };
 
 describe('AddCancha Component', () => {
