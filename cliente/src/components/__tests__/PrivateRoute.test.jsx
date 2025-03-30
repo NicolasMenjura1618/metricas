@@ -2,7 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PrivateRoute from '../PrivateRoute';
-import { AuthProvider } from '../../context/AuthContext';
+import AuthProviderMock from './AuthProviderMock';
+
 
 describe('PrivateRoute', () => {
   it('redirects to login page when not authenticated and preserves query parameters', () => {
@@ -28,7 +29,10 @@ describe('PrivateRoute', () => {
   it('renders children when authenticated', () => {
     render(
       <MemoryRouter initialEntries={['/protected']}>
-        <AuthProvider value={{ user: { name: 'Test User' }, loading: false }}>
+        <AuthProviderMock value={{ isAuthenticated: true, user: { name: 'Test User' } }}>
+
+
+
           <Routes>
             <Route
               path="/protected"
@@ -39,7 +43,8 @@ describe('PrivateRoute', () => {
               }
             />
           </Routes>
-        </AuthProvider>
+        </AuthProviderMock>
+
       </MemoryRouter>
     );
 

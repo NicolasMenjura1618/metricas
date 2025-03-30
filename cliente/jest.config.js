@@ -13,17 +13,18 @@ module.exports = {
   reporters: [
     "default",
     "jest-spec-reporter",
-    [
-      "jest-html-reporter",
-      {
-        pageTitle: "Test Report",
-        outputPath: "test-report.html",
-        includeFailureMsg: true,
-        suppressErrorSummary: true,
-        suppressGlobalSummary: false,
-        theme: "lightTheme",
-      }
-    ],
+    // [
+    //   "jest-html-reporter",
+    //   {
+    //     pageTitle: "Test Report",
+    //     outputPath: "test-report.html",
+    //     includeFailureMsg: true,
+    //     suppressErrorSummary: true,
+    //     suppressGlobalSummary: false,
+    //     theme: "lightTheme",
+    //   }
+    // ],
+
     [
       "jest-junit",
       {

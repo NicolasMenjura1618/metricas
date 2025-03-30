@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify'; // Moved import for consistency
-import BuscaCanchas from "../apis/BuscaCanchas";
+import { getCancha, updateCancha } from '../../services/api';
+
 
 const ActualizarCancha = () => {
   const { id } = useParams();
@@ -20,7 +21,8 @@ const ActualizarCancha = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await BuscaCanchas.get(`/${id}`);
+        const response = await getCancha(id);
+
         console.log("Response data cancha:", response.data.data.Cancha);
   
         const CanchaX = response.data.data.Cancha; // Extrae la cancha correctamente
@@ -46,7 +48,8 @@ const ActualizarCancha = () => {
       const token = localStorage.getItem("token"); // Retrieve the token
       console.log("Token value:", token); // Log the token value for debugging
 
-      await BuscaCanchas.put(`/${id}`, {
+      await updateCancha(id, {
+
         nombre,
         locacion,
         direccion,
@@ -133,14 +136,34 @@ const ActualizarCancha = () => {
         <button type="submit" className="btn btn-primary">
           Actualizar Cancha
         </button>
+        <div className="form-group">
+          <label htmlFor="estado">Estado</label>
+          <input
+            value={estado}
+            onChange={(e) => setEstado(e.target.value)}
+            id="estado"
+            className="form-control"
+            type="text"
+          />
+        </div>
         <button type="button" className="btn btn-secondary" onClick={() => {
           setNombre("");
           setLocacion("");
           setDireccion("");
           setDescripcion("");
           setPrecio(""); // Reset Precio field
+          setEstado(""); // Reset Estado field
+
         }}>
           Restablecer
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={() => navigate("/dashboard")}
+        >
+          Cancelar
+
 
 
 

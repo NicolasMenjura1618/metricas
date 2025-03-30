@@ -24,6 +24,36 @@ const mockCancha = {
   nombre: 'Cancha Test',
   descripcion: 'Descripción de prueba',
   precio: '100',
+  estado: 'disponible' // Ensure estado is included
+};
+
+@@ ... @@
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { BrowserRouter } from 'react-router-dom';
+import ActualizarCancha from '../ActualizarCancha';
+
+// Mock the API service
+jest.mock('../../services/api', () => ({
+  getCancha: jest.fn(),
+  updateCancha: jest.fn()
+}));
+
+// Mock react-router-dom hooks
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  useParams: () => ({ id: '1' })
+}));
+
+// Mock data
+const mockCancha = {
+  id: 1,
+  nombre: 'Cancha Test',
+  descripcion: 'Descripción de prueba',
+  precio: '100',
   estado: 'disponible'
 };
 
@@ -49,6 +79,10 @@ describe('ActualizarCancha Component', () => {
       expect(screen.getByLabelText(/nombre/i)).toHaveValue(mockCancha.nombre);
       expect(screen.getByLabelText(/descripción/i)).toHaveValue(mockCancha.descripcion);
       expect(screen.getByLabelText(/precio/i)).toHaveValue(mockCancha.precio);
+      expect(screen.getByLabelText(/estado/i)).toHaveValue(mockCancha.estado); // Check estado field
+
+      expect(screen.getByLabelText(/estado/i)).toHaveValue(mockCancha.estado); // Check estado field
+
       expect(screen.getByLabelText(/estado/i)).toHaveValue(mockCancha.estado);
     });
   });
@@ -95,6 +129,10 @@ describe('ActualizarCancha Component', () => {
       expect(screen.getByText(/el nombre es requerido/i)).toBeInTheDocument();
       expect(screen.getByText(/la descripción es requerida/i)).toBeInTheDocument();
       expect(screen.getByText(/el precio es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/el estado es requerido/i)).toBeInTheDocument(); // Check estado validation
+
+      expect(screen.getByText(/el estado es requerido/i)).toBeInTheDocument(); // Check estado validation
+
     });
   });
 
@@ -133,6 +171,12 @@ describe('ActualizarCancha Component', () => {
 
     await waitFor(() => {
       expect(api.updateCancha).toHaveBeenCalledWith(mockCancha.id, {
+        ...mockCancha,
+        estado: 'disponible' // Ensure estado is included in the update
+
+        ...mockCancha,
+        estado: 'disponible' // Ensure estado is included in the update
+
         ...mockCancha,
         nombre: 'Cancha Actualizada'
       });
@@ -209,9 +253,17 @@ describe('ActualizarCancha Component', () => {
     });
 
     // Click reset button
+    fireEvent.click(screen.getByRole('button', { name: /restablecer/i })); // Ensure reset button is clicked
+
+    fireEvent.click(screen.getByRole('button', { name: /restablecer/i })); // Ensure reset button is clicked
+
     fireEvent.click(screen.getByRole('button', { name: /restablecer/i }));
 
     // Verify original data is restored
     expect(screen.getByLabelText(/nombre/i)).toHaveValue(mockCancha.nombre);
+    expect(screen.getByLabelText(/estado/i)).toHaveValue(mockCancha.estado); // Verify estado is restored
+
+    expect(screen.getByLabelText(/estado/i)).toHaveValue(mockCancha.estado); // Verify estado is restored
+
   });
 });

@@ -55,7 +55,11 @@ api.interceptors.response.use(
   }
 );
 
+export const getCancha = (id) => api.get(`/canchas/${id}`);
+export const updateCancha = (id, data) => api.put(`/canchas/${id}`, data);
+
 export const authAPI = {
+
   login: (credentials) => api.post('/users/login', credentials),
   register: (userData) => api.post('/users', userData),
   getProfile: () => api.get('/users/me'),

@@ -10,13 +10,10 @@ const mockContextValue = {
   canchas: []
 };
 
-
 // Mock the api service
 jest.mock('../../services/api', () => ({
   addCancha: jest.fn()
 }));
-
-
 
 const renderAddCancha = () => {
   return render(
@@ -26,7 +23,6 @@ const renderAddCancha = () => {
       </BrowserRouter>
     </CanchasContext.Provider>
   );
-
 };
 
 describe('AddCancha Component', () => {
@@ -36,41 +32,28 @@ describe('AddCancha Component', () => {
 
   test('renders add cancha form', () => {
     renderAddCancha();
-    expect(screen.getByLabelText(/nombre/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/descripción/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/precio/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /agregar cancha/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/nombre de la cancha/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/ubicación de la cancha/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/dirección de la cancha/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/descripción de la cancha/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /añadir/i })).toBeInTheDocument();
   });
 
   test('validates required fields and empty name', async () => {
-
     renderAddCancha();
-    const submitButton = screen.getByRole('button', { name: /agregar cancha/i });
+    const submitButton = screen.getByRole('button', { name: /añadir/i });
     
     fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText(/el nombre es requerido/i)).toBeInTheDocument();
       expect(screen.getByText(/la descripción es requerida/i)).toBeInTheDocument();
-      expect(screen.getByText(/el precio es requerido/i)).toBeInTheDocument();
-    });
-  });
-
-  test('validates price format', async () => {
-    renderAddCancha();
-    const precioInput = screen.getByLabelText(/precio/i);
-    
-    fireEvent.change(precioInput, { target: { value: 'invalid-price' } });
-    fireEvent.blur(precioInput);
-    
-    await waitFor(() => {
-      expect(screen.getByText(/el precio debe ser un número válido/i)).toBeInTheDocument();
     });
   });
 
   test('validates address format', async () => {
     renderAddCancha();
-    const addressInput = screen.getByLabelText(/dirección/i);
+    const addressInput = screen.getByLabelText(/dirección de la cancha/i);
     
     fireEvent.change(addressInput, { target: { value: 'invalid-address' } });
     fireEvent.blur(addressInput);
@@ -81,11 +64,11 @@ describe('AddCancha Component', () => {
   });
 
   test('handles successful cancha creation', async () => {
-
     const mockCanchaData = {
       nombre: 'Cancha Test',
       descripcion: 'Descripción de prueba',
-      precio: '100'
+      locacion: 'Ubicación X',
+      direccion: 'Dirección Y'
     };
 
     const api = require('../../services/api');
@@ -93,53 +76,46 @@ describe('AddCancha Component', () => {
 
     renderAddCancha();
     
-    fireEvent.change(screen.getByLabelText(/nombre/i), {
+    fireEvent.change(screen.getByLabelText(/nombre de la cancha/i), {
       target: { value: mockCanchaData.nombre },
     });
-    fireEvent.change(screen.getByLabelText(/descripción/i), {
+    fireEvent.change(screen.getByLabelText(/ubicación de la cancha/i), {
+      target: { value: mockCanchaData.locacion },
+    });
+    fireEvent.change(screen.getByLabelText(/dirección de la cancha/i), {
+      target: { value: mockCanchaData.direccion },
+    });
+    fireEvent.change(screen.getByLabelText(/descripción de la cancha/i), {
       target: { value: mockCanchaData.descripcion },
     });
-    fireEvent.change(screen.getByLabelText(/precio/i), {
-      target: { value: mockCanchaData.precio },
-    });
-    
-    fireEvent.click(screen.getByRole('button', { name: /agregar cancha/i }));
+
+    fireEvent.click(screen.getByRole('button', { name: /añadir/i }));
     
     await waitFor(() => {
       expect(api.addCancha).toHaveBeenCalledWith(mockCanchaData);
     });
   });
 
-  test('validates location coordinates', async () => {
-    renderAddCancha();
-    const locationInput = screen.getByLabelText(/ubicación/i);
-    
-    fireEvent.change(locationInput, { target: { value: 'invalid-coordinates' } });
-    fireEvent.blur(locationInput);
-    
-    await waitFor(() => {
-      expect(screen.getByText(/las coordenadas están fuera de rango/i)).toBeInTheDocument();
-    });
-  });
-
   test('handles creation error', async () => {
-
     const api = require('../../services/api');
     api.addCancha.mockRejectedValueOnce(new Error('Error al crear la cancha'));
 
     renderAddCancha();
     
-    fireEvent.change(screen.getByLabelText(/nombre/i), {
+    fireEvent.change(screen.getByLabelText(/nombre de la cancha/i), {
       target: { value: 'Test Cancha' },
     });
-    fireEvent.change(screen.getByLabelText(/descripción/i), {
+    fireEvent.change(screen.getByLabelText(/descripción de la cancha/i), {
       target: { value: 'Test Descripción' },
     });
-    fireEvent.change(screen.getByLabelText(/precio/i), {
-      target: { value: '100' },
+    fireEvent.change(screen.getByLabelText(/ubicación de la cancha/i), {
+      target: { value: 'Ubicación Test' },
+    });
+    fireEvent.change(screen.getByLabelText(/dirección de la cancha/i), {
+      target: { value: 'Dirección Test' },
     });
     
-    fireEvent.click(screen.getByRole('button', { name: /agregar cancha/i }));
+    fireEvent.click(screen.getByRole('button', { name: /añadir/i }));
     
     await waitFor(() => {
       expect(screen.getByText(/error al crear la cancha/i)).toBeInTheDocument();

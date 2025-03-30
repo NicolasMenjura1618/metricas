@@ -1,5 +1,6 @@
 import request from 'supertest';
-import app from '../server'; // Adjust the import based on your server file location
+import app from '../server/server'; // Adjusted import to the correct path
+
 
 import { query } from '../db'; // Adjust the import based on your db file location
 

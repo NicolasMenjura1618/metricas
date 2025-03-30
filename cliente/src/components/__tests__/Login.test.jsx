@@ -27,7 +27,8 @@ describe('Login Component', () => {
 
   test('renders login form', () => {
     renderLogin();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument();
+
     expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
   });
@@ -49,6 +50,12 @@ describe('Login Component', () => {
     const emailInput = screen.getByLabelText(/email/i);
     
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    fireEvent.blur(emailInput);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/formato de email inválido/i)).toBeInTheDocument();
+    });
+
     fireEvent.blur(emailInput);
     
     await waitFor(() => {

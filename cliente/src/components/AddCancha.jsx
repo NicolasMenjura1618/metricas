@@ -46,47 +46,59 @@ function AddCancha() {
       <div className="p-4 border rounded shadow bg-light">
         <form onSubmit={handleSubmit}>
           <div className="form-row">
-            <div className="col mb-2">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Nombre de la cancha"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-              />
-            </div>
-            <div className="col mb-2">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Ubicación de la cancha" 
-                value={locacion}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setLocacion(value);
-                }}
-              />
-            </div>
-            <div className="col mb-2">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Dirección de la cancha"
-                value={direccion}
-                required
-                onChange={(e) => setDireccion(e.target.value)}
-              />
-            </div>
-            <div className="col mb-2">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Descripción de la cancha"
-                value={descripcion}
-                required
-                onChange={(e) => setDescripcion(e.target.value)}
-              />
-            </div>
+      <div className="col mb-2">
+        <label htmlFor="nombre">Nombre de la cancha</label>
+        <input
+          id="nombre"
+          type="text"
+          className="form-control"
+          placeholder="Nombre de la cancha"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+        />
+      </div>
+
+      <div className="col mb-2">
+        <label htmlFor="ubicacion">Ubicación de la cancha</label>
+        <input
+          id="ubicacion"
+          type="text"
+          className="form-control"
+          placeholder="Ubicación de la cancha" 
+          value={locacion}
+          onChange={(e) => {
+            const value = e.target.value;
+            setLocacion(value);
+          }}
+        />
+      </div>
+
+      <div className="col mb-2">
+        <label htmlFor="direccion">Dirección de la cancha</label>
+        <input
+          id="direccion"
+          type="text"
+          className="form-control"
+          placeholder="Dirección de la cancha"
+          value={direccion}
+          required
+          onChange={(e) => setDireccion(e.target.value)}
+        />
+      </div>
+
+      <div className="col mb-2">
+        <label htmlFor="descripcion">Descripción de la cancha</label>
+        <input
+          id="descripcion"
+          type="text"
+          className="form-control"
+          placeholder="Descripción de la cancha"
+          value={descripcion}
+          required
+          onChange={(e) => setDescripcion(e.target.value)}
+        />
+      </div>
+
             <div className="col text-center">
               <button className="btn btn-primary w-100" type="submit">Añadir</button>
 
