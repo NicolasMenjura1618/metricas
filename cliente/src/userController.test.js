@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../server/server'; // Adjusted import to the correct path
+import app from '../server/index'; // Adjusted import to the correct path
 
 
 

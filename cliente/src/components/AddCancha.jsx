@@ -3,7 +3,6 @@ import { toast } from 'react-toastify'; // Moved import for consistency
 import { canchasAPI } from '../services/api'; 
 import { CanchasContext } from "../context/contextCanchas"; // Import the context
 
-
 function AddCancha() {
   const [nombre, setNombre] = useState("");
   const [locacion, setLocacion] = useState("");
@@ -15,14 +14,12 @@ function AddCancha() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-       // setLoading(true);
-
-              const canchasResponse = await canchasAPI.create({
-                nombre,
-                locacion,
-                direccion,
-                descripcion
-              });
+      const canchasResponse = await canchasAPI.create({
+        nombre,
+        locacion,
+        direccion,
+        descripcion
+      });
 
       setCanchas(canchasResponse.data); // Update the context with the new list
 
@@ -36,72 +33,66 @@ function AddCancha() {
       setDescripcion("");
     } catch (error) {
       toast.error("Error al añadir cancha."); // User-friendly error message using toast
-
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100" onSubmit={handleSubmit}>
-
+    <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="p-4 border rounded shadow bg-light">
         <form onSubmit={handleSubmit}>
           <div className="form-row">
-      <div className="col mb-2">
-        <label htmlFor="nombre">Nombre de la cancha</label>
-        <input
-          id="nombre"
-          type="text"
-          className="form-control"
-          placeholder="Nombre de la cancha"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-        />
-      </div>
+            <div className="col mb-2">
+              <label htmlFor="nombre">Nombre de la cancha</label>
+              <input
+                id="nombre"
+                type="text"
+                className="form-control"
+                placeholder="Nombre de la cancha"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+              />
+            </div>
 
-      <div className="col mb-2">
-        <label htmlFor="ubicacion">Ubicación de la cancha</label>
-        <input
-          id="ubicacion"
-          type="text"
-          className="form-control"
-          placeholder="Ubicación de la cancha" 
-          value={locacion}
-          onChange={(e) => {
-            const value = e.target.value;
-            setLocacion(value);
-          }}
-        />
-      </div>
+            <div className="col mb-2">
+              <label htmlFor="ubicacion">Ubicación de la cancha</label>
+              <input
+                id="ubicacion"
+                type="text"
+                className="form-control"
+                placeholder="Ubicación de la cancha" 
+                value={locacion}
+                onChange={(e) => setLocacion(e.target.value)}
+              />
+            </div>
 
-      <div className="col mb-2">
-        <label htmlFor="direccion">Dirección de la cancha</label>
-        <input
-          id="direccion"
-          type="text"
-          className="form-control"
-          placeholder="Dirección de la cancha"
-          value={direccion}
-          required
-          onChange={(e) => setDireccion(e.target.value)}
-        />
-      </div>
+            <div className="col mb-2">
+              <label htmlFor="direccion">Dirección de la cancha</label>
+              <input
+                id="direccion"
+                type="text"
+                className="form-control"
+                placeholder="Dirección de la cancha"
+                value={direccion}
+                required
+                onChange={(e) => setDireccion(e.target.value)}
+              />
+            </div>
 
-      <div className="col mb-2">
-        <label htmlFor="descripcion">Descripción de la cancha</label>
-        <input
-          id="descripcion"
-          type="text"
-          className="form-control"
-          placeholder="Descripción de la cancha"
-          value={descripcion}
-          required
-          onChange={(e) => setDescripcion(e.target.value)}
-        />
-      </div>
+            <div className="col mb-2">
+              <label htmlFor="descripcion">Descripción de la cancha</label>
+              <input
+                id="descripcion"
+                type="text"
+                className="form-control"
+                placeholder="Descripción de la cancha"
+                value={descripcion}
+                required
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+            </div>
 
             <div className="col text-center">
               <button className="btn btn-primary w-100" type="submit">Añadir</button>
-
             </div>
           </div>
         </form>

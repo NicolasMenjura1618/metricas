@@ -1,4 +1,4 @@
-import React from 'react';
+                                                                    |||import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
@@ -6,18 +6,17 @@ import AddCancha from '../AddCancha';
 import { CanchasContext } from '../../context/contextCanchas'; // Import the context
 
 const mockContextValue = {
-  addCancha: jest.fn(),
-  canchas: []
+  setCanchas: jest.fn(),
+  notify: jest.fn(),
 };
 
-// Mock the api service
 jest.mock('../../services/api', () => ({
-  addCancha: jest.fn()
+  addCancha: jest.fn(),
 }));
 
 const renderAddCancha = () => {
   return render(
-    <CanchasContext.Provider value={mockContextValue}> // Wrap in Provider
+    <CanchasContext.Provider value={mockContextValue}>
       <BrowserRouter>
         <AddCancha />
       </BrowserRouter>
@@ -72,7 +71,7 @@ describe('AddCancha Component', () => {
     };
 
     const api = require('../../services/api');
-    api.addCancha.mockResolvedValueOnce({ id: 1, ...mockCanchaData });
+    api.addCancha.mockResolvedValueOnce({ data: { id: 1, ...mockCanchaData } });
 
     renderAddCancha();
     
@@ -93,6 +92,8 @@ describe('AddCancha Component', () => {
     
     await waitFor(() => {
       expect(api.addCancha).toHaveBeenCalledWith(mockCanchaData);
+      expect(mockContextValue.setCanchas).toHaveBeenCalledWith({ id: 1, ...mockCanchaData });
+      expect(mockContextValue.notify).toHaveBeenCalledWith("Cancha creada");
     });
   });
 
@@ -118,7 +119,7 @@ describe('AddCancha Component', () => {
     fireEvent.click(screen.getByRole('button', { name: /añadir/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/error al crear la cancha/i)).toBeInTheDocument();
+      expect(screen.getByText(/error al añadir cancha/i)).toBeInTheDocument();
     });
   });
 });
