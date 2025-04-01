@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify'; // Moved import for consistency
-import { getCancha, updateCancha } from '../../services/api';
+import { getCancha, updateCancha } from '../services/api';
 
 
 const ActualizarCancha = () => {
@@ -16,6 +16,7 @@ const ActualizarCancha = () => {
   const [direccion, setDireccion] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState(""); // Added state for Precio
+  const [estado, setEstado] = useState(""); // Added state for Estado
 
   // Obtención de datos en el useEffect
   useEffect(() => {
@@ -49,7 +50,6 @@ const ActualizarCancha = () => {
       console.log("Token value:", token); // Log the token value for debugging
 
       await updateCancha(id, {
-
         nombre,
         locacion,
         direccion,
@@ -113,18 +113,6 @@ const ActualizarCancha = () => {
         </div>
         <div className="form-group">
           <label htmlFor="precio">Precio</label>
-
-
-
-
-
-
-
-
-
-
-
-
           <input
             value={precio}
             onChange={(e) => setPrecio(e.target.value)}
@@ -133,9 +121,6 @@ const ActualizarCancha = () => {
             type="text"
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Actualizar Cancha
-        </button>
         <div className="form-group">
           <label htmlFor="estado">Estado</label>
           <input
@@ -146,6 +131,9 @@ const ActualizarCancha = () => {
             type="text"
           />
         </div>
+        <button type="submit" className="btn btn-primary">
+          Actualizar Cancha
+        </button>
         <button type="button" className="btn btn-secondary" onClick={() => {
           setNombre("");
           setLocacion("");
@@ -153,30 +141,9 @@ const ActualizarCancha = () => {
           setDescripcion("");
           setPrecio(""); // Reset Precio field
           setEstado(""); // Reset Estado field
-
         }}>
           Restablecer
         </button>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={() => navigate("/dashboard")}
-        >
-          Cancelar
-
-
-
-
-
-
-
-
-
-
-
-
-
-        </button> <!-- Added reset button -->
       </form>
     </div>
   );

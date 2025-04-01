@@ -28,7 +28,6 @@ describe('Login Component', () => {
   test('renders login form', () => {
     renderLogin();
     expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument();
-
     expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
   });
@@ -47,8 +46,8 @@ describe('Login Component', () => {
 
   test('validates email format', async () => {
     renderLogin();
-    const emailInput = screen.getByLabelText(/email/i);
-    
+    const emailInput = screen.getByLabelText(/correo electrónico/i);
+
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
     fireEvent.blur(emailInput);
     
@@ -70,7 +69,7 @@ describe('Login Component', () => {
 
     renderLogin();
     
-    fireEvent.change(screen.getByLabelText(/email/i), {
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), {
       target: { value: 'test@test.com' },
     });
     fireEvent.change(screen.getByLabelText(/contraseña/i), {
@@ -93,7 +92,7 @@ describe('Login Component', () => {
 
     renderLogin();
     
-    fireEvent.change(screen.getByLabelText(/email/i), {
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), {
       target: { value: 'wrong@test.com' },
     });
     fireEvent.change(screen.getByLabelText(/contraseña/i), {
@@ -106,4 +105,4 @@ describe('Login Component', () => {
       expect(screen.getByText(/credenciales inválidas/i)).toBeInTheDocument();
     });
   });
-});
+}); // Closing brace added here

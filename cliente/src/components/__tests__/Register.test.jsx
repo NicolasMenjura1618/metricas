@@ -28,7 +28,7 @@ describe('Register Component', () => {
   test('renders registration form', () => {
     renderRegister();
     expect(screen.getByLabelText(/nombre/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/confirmar contraseña/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /registrarse/i })).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe('Register Component', () => {
     
     await waitFor(() => {
       expect(screen.getByText(/el nombre es requerido/i)).toBeInTheDocument();
-      expect(screen.getByText(/el email es requerido/i)).toBeInTheDocument();
+      expect(screen.getByText(/el correo electrónico es requerido/i)).toBeInTheDocument();
       expect(screen.getByText(/la contraseña es requerida/i)).toBeInTheDocument();
     });
   });
@@ -67,7 +67,7 @@ describe('Register Component', () => {
 
   test('validates email format', async () => {
     renderRegister();
-    const emailInput = screen.getByLabelText(/email/i);
+    const emailInput = screen.getByLabelText(/correo electrónico/i);
     
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
     fireEvent.blur(emailInput);
@@ -87,7 +87,7 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByLabelText(/nombre/i), {
       target: { value: 'Test User' },
     });
-    fireEvent.change(screen.getByLabelText(/email/i), {
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), {
       target: { value: 'test@test.com' },
     });
     fireEvent.change(screen.getByLabelText(/contraseña/i), {
@@ -110,14 +110,14 @@ describe('Register Component', () => {
 
   test('handles registration error', async () => {
     const api = require('../../services/api');
-    api.registerUser.mockRejectedValueOnce(new Error('El email ya está registrado'));
+    api.registerUser.mockRejectedValueOnce(new Error('El correo electrónico ya está registrado'));
 
     renderRegister();
     
     fireEvent.change(screen.getByLabelText(/nombre/i), {
       target: { value: 'Test User' },
     });
-    fireEvent.change(screen.getByLabelText(/email/i), {
+    fireEvent.change(screen.getByLabelText(/correo electrónico/i), {
       target: { value: 'existing@test.com' },
     });
     fireEvent.change(screen.getByLabelText(/contraseña/i), {
@@ -130,7 +130,7 @@ describe('Register Component', () => {
     fireEvent.click(screen.getByRole('button', { name: /registrarse/i }));
     
     await waitFor(() => {
-      expect(screen.getByText(/el email ya está registrado/i)).toBeInTheDocument();
+      expect(screen.getByText(/el correo electrónico ya está registrado/i)).toBeInTheDocument();
     });
   });
 });

@@ -1,11 +1,5 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.26.9",
-    "@babel/preset-react": "^7.26.3",
-    "babel-jest": "^29.7.0",
-    "jest-html-reporter": "^4.1.0",
-    "jest-junit": "^16.0.0",
-    "jest-spec-reporter": "^1.0.19"
+    "jest-junit": "^16.0.0"
   }
 }
