@@ -26,12 +26,7 @@ const Login = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.email) {
-      newErrors.email = 'El correo electrónico es requerido';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Por favor ingrese un correo electrónico válido';
-    }
-
+   
     if (!formData.password) {
       newErrors.password = 'La contraseña es requerida';
     }
